@@ -1,0 +1,85 @@
+# LearnSQL
+
+Interactive SQL visualization and tutorial — the learnGitBranching idea applied to SQL.
+
+You type SQL in a workbench, watch a query pipeline light up, compare your result to a goal, and clear levels. Sandbox mode is free play on a small shop schema (customers, products, orders).
+
+Inspired by [pcottle/learnGitBranching](https://github.com/pcottle/learnGitBranching).
+
+## Live demo
+
+GitHub Pages: https://alisadeghiaghili.github.io/learn-sql/
+
+## Features (MVP)
+
+- **Sandbox** — free SQL against an in-browser SQLite (sql.js / WASM)
+- **Levels** — intro, filters, joins, aggregation sequences
+- **Goal compare** — result sets (columns + rows, optional order)
+- **Query pipeline** — FROM → JOIN → WHERE → GROUP → … stages light as you run
+- **Meta commands** — `levels`, `hint`, `show goal`, `show solution`, `reset`, `sandbox`, `help`
+- **Query golf** — statements used vs par (stored in `localStorage`)
+
+## Quick start
+
+```bash
+npm install
+npm run dev
+```
+
+Open the printed local URL. Production build:
+
+```bash
+npm run build
+npm run preview
+```
+
+## Tests and typecheck
+
+```bash
+npm run typecheck
+npm test
+```
+
+## Architecture
+
+```
+src/
+  engine/     sql.js wrapper, result compare, types
+  levels/     level JSON-as-TS, sequences, shared shop schema
+  commands/   console meta-command parser
+  components/ schema rail, editor, pipeline, result, goal, console
+  App.tsx     modes (sandbox / level), win check, undo/reset
+```
+
+See [DESIGN.md](./DESIGN.md) for the LGB → LearnSQL mapping and visual system.
+
+## Level shape
+
+```ts
+{
+  id: 'intro-where',
+  name: 'Filter Rows',
+  hint: "SELECT name FROM customers WHERE city = 'London';",
+  schema: 'CREATE TABLE ...',
+  seed: 'INSERT INTO ...',
+  solution: "SELECT name FROM customers WHERE city = 'London';",
+  goal: {
+    type: 'result',
+    columns: ['name'],
+    rows: [['Ada Lovelace']],
+    orderMatters: false,
+  },
+  startDialog: [{ type: 'modal', markdowns: ['...'] }],
+  golfPar: 1,
+}
+```
+
+Win conditions: `result` | `table` | `schema`.
+
+## Roadmap
+
+- Level builder + import/export (like LGB `build level` / `import level`)
+- Shareable permalinks (`?level=...&sql=...`)
+- Window functions, subqueries/CTEs sequences
+- DML/DDL levels with table-state goals
+- FA locale for dialogs (structure already allows it)
