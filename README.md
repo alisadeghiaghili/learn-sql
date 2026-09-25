@@ -2,18 +2,22 @@
 
 Interactive SQL visualization and tutorial — the learnGitBranching idea applied to SQL.
 
-You type SQL in a workbench, watch a query pipeline light up, compare your result to a goal, and clear levels. Sandbox mode is free play on a small shop schema (customers, products, orders).
+You type SQL in a workbench, watch a query pipeline light up, compare your result to a goal, and clear levels. Sandbox mode is free play on a small shop schema (customers, products, orders). Everything runs in the browser (SQLite via sql.js); no backend.
 
 Inspired by [pcottle/learnGitBranching](https://github.com/pcottle/learnGitBranching).
 
 ## Live demo
 
-GitHub Pages: https://alisadeghiaghili.github.io/learn-sql/
+https://alisadeghiaghili.github.io/learn-sql/
 
-## Features (MVP)
+## Why this exists
 
-- **Sandbox** — free SQL against an in-browser SQLite (sql.js / WASM)
-- **Levels** — intro, filters, joins, aggregation sequences
+Git tutorials often fail because you cannot see the commit graph. SQL tutorials fail for the same reason: you write a query and only see a flat table, not the pipeline or the goal. LearnSQL makes both visible — schema rail, clause pipeline, result grid, and a side-by-side goal — then challenges you to close the gap.
+
+## Features
+
+- **Sandbox** — free SQL against an in-browser SQLite database
+- **Leveled challenges** — intro, filters, joins, aggregation sequences
 - **Goal compare** — result sets (columns + rows, optional order)
 - **Query pipeline** — FROM → JOIN → WHERE → GROUP → … stages light as you run
 - **Meta commands** — `levels`, `hint`, `show goal`, `show solution`, `reset`, `sandbox`, `help`
@@ -45,7 +49,7 @@ npm test
 ```
 src/
   engine/     sql.js wrapper, result compare, types
-  levels/     level JSON-as-TS, sequences, shared shop schema
+  levels/     level definitions, sequences, shared shop schema
   commands/   console meta-command parser
   components/ schema rail, editor, pipeline, result, goal, console
   App.tsx     modes (sandbox / level), win check, undo/reset
@@ -76,10 +80,20 @@ See [DESIGN.md](./DESIGN.md) for the LGB → LearnSQL mapping and visual system.
 
 Win conditions: `result` | `table` | `schema`.
 
+## Deployment
+
+Pushes to `main` run `.github/workflows/deploy-pages.yml` (typecheck → test → build → GitHub Pages).
+
 ## Roadmap
 
 - Level builder + import/export (like LGB `build level` / `import level`)
 - Shareable permalinks (`?level=...&sql=...`)
 - Window functions, subqueries/CTEs sequences
 - DML/DDL levels with table-state goals
-- FA locale for dialogs (structure already allows it)
+- Persian locale for dialogs
+
+## License
+
+Apache License 2.0. See [LICENSE](./LICENSE).
+
+Copyright 2026 Ali Sadeghi Aghili.
