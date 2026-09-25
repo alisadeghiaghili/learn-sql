@@ -21,6 +21,19 @@ await page.waitForSelector('.brand', { timeout: 10000 });
 const brand = await page.textContent('.brand');
 const title = await page.title();
 
+// Welcome dialog on first load
+const welcomeVisible = await page.$('.welcome-title');
+const welcomeText = welcomeVisible
+  ? await page.textContent('.welcome-body')
+  : '';
+if (welcomeVisible) {
+  await page.click('.welcome-modal button:has-text("Sandbox")');
+  await page.waitForSelector('.welcome-title', {
+    state: 'detached',
+    timeout: 5000,
+  });
+}
+
 // Sandbox should have schema tables after boot
 await page.waitForSelector('.table-card', { timeout: 15000 });
 const tables = await page.$$eval('.table-card h3', (nodes) =>
@@ -28,7 +41,10 @@ const tables = await page.$$eval('.table-card h3', (nodes) =>
 );
 
 // Run a query from the editor
-await page.fill('.sql-editor', "SELECT name, city FROM customers WHERE city = 'London';");
+await page.fill(
+  '.sql-editor',
+  "SELECT name, city FROM customers WHERE city = 'London';",
+);
 await page.click('button.primary');
 await page.waitForSelector('.data-grid td', { timeout: 10000 });
 const rows = await page.$$eval('.data-grid tbody tr', (trs) =>
@@ -42,19 +58,26 @@ await page.waitForTimeout(200);
 const logText = await page.textContent('.console-log');
 
 // Open levels and pick first challenge
-await page.click('text=Levels');
-await page.waitForSelector('.modal');
+await page.click('.toolbar-actions button:has-text("Levels")');
+await page.waitForSelector('.level-item', { timeout: 5000 });
 await page.click('.level-item');
 await page.waitForTimeout(500);
 const dialogVisible = await page.$('.modal');
 
-await page.screenshot({ path: 'output/playwright/learn-sql-smoke.png', fullPage: true });
+await page.screenshot({
+  path: 'output/playwright/learn-sql-smoke.png',
+  fullPage: true,
+});
 
 console.log(
   JSON.stringify(
     {
       title,
       brand: brand?.replace(/\s+/g, ''),
+      welcome: !!welcomeVisible,
+      welcomeHasPublisher: (welcomeText || '').includes('Ali Sadeghi Aghili'),
+      welcomeHasPipeline: (welcomeText || '').includes('Schema'),
+      welcomeHasCoffee: (welcomeText || '').includes('Buy Me a Coffee'),
       tables,
       rows,
       helpLogged: (logText || '').includes('Commands'),

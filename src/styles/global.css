@@ -138,6 +138,24 @@ button:disabled {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
+  align-items: center;
+}
+
+.toolbar-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 12px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.toolbar-link:hover {
+  border-color: var(--accent);
+}
+
+.toolbar-link.support {
+  color: var(--goal);
 }
 
 .main {
@@ -677,4 +695,74 @@ button:disabled {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ——— Welcome dialog ——— */
+
+.welcome-modal {
+  width: min(640px, 100%);
+  max-height: min(88vh, 720px);
+}
+
+.welcome-body {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.welcome-body h1.welcome-title {
+  margin: 0 0 12px;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.welcome-h2 {
+  margin: 18px 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.welcome-body p {
+  margin: 0 0 12px;
+}
+
+.welcome-list {
+  margin: 0 0 12px;
+  padding-left: 1.2em;
+}
+
+.welcome-list li {
+  margin-bottom: 6px;
+}
+
+.wd-code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+.welcome-body a {
+  color: var(--accent);
+}
+
+.coffee-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.coffee-btn img {
+  display: block;
 }

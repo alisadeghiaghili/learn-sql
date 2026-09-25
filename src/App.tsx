@@ -10,7 +10,6 @@ import { checkWin } from './engine/compare';
 import type { QueryResult, TableInfo, WinCheck } from './engine/types';
 import { SqlError } from './engine/types';
 import {
-  allLevels,
   getNextLevel,
   getLevel,
   shopSchema,
@@ -30,6 +29,11 @@ import { PipelineBar, detectStages, type PipeStage } from './components/Pipeline
 import { GoalPanel } from './components/GoalPanel';
 import { LevelsModal } from './components/LevelsModal';
 import { DialogModal } from './components/DialogModal';
+import {
+  WelcomeDialog,
+  COFFEE_URL,
+  GITHUB_URL,
+} from './components/WelcomeDialog';
 
 type Mode =
   | { kind: 'sandbox' }
@@ -93,6 +97,13 @@ export function App() {
   const [pipeActive, setPipeActive] = useState<Set<PipeStage>>(new Set());
   const [pipeHighlight, setPipeHighlight] = useState<number | null>(null);
   const [statementsIssued, setStatementsIssued] = useState(0);
+  const [showWelcome, setShowWelcome] = useState(() => {
+    try {
+      return !new URLSearchParams(window.location.search).has('NODEMO');
+    } catch {
+      return true;
+    }
+  });
 
   const undoStack = useRef<Snapshot[]>([]);
   const modeRef = useRef(mode);
@@ -289,12 +300,12 @@ export function App() {
           else pushLog('Sandbox has no hint. Open levels for challenges.', 'muted');
           return;
         }
-        case 'objective': {
+        case 'lesson': {
           const m = modeRef.current;
           if (m.kind === 'level') {
             setMode({ ...m, intro: true });
           } else {
-            pushLog('No objective in sandbox.', 'muted');
+            pushLog('No level intro in sandbox. Open levels first.', 'muted');
           }
           return;
         }
@@ -399,6 +410,12 @@ export function App() {
           </button>
           <button
             type="button"
+            onClick={() => void handleMeta({ kind: 'lesson' })}
+          >
+            Lesson
+          </button>
+          <button
+            type="button"
             onClick={() => void handleMeta({ kind: 'hint' })}
           >
             Hint
@@ -412,6 +429,23 @@ export function App() {
           <button type="button" onClick={() => void enterSandbox()}>
             Sandbox
           </button>
+          <a
+            className="toolbar-link"
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+          <a
+            className="toolbar-link support"
+            href={COFFEE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Buy me a coffee"
+          >
+            Buy me a coffee
+          </a>
         </div>
       </header>
 
@@ -496,9 +530,16 @@ export function App() {
           }}
         />
       )}
+
+      {showWelcome && (
+        <WelcomeDialog
+          onClose={() => setShowWelcome(false)}
+          onOpenLevels={() => {
+            setShowWelcome(false);
+            setShowLevels(true);
+          }}
+        />
+      )}
     </div>
   );
 }
-
-// silence unused in case tree-shaking checks
-void allLevels;

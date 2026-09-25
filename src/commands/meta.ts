@@ -11,7 +11,7 @@ export type MetaCommand =
   | { kind: 'showGoal' }
   | { kind: 'hideGoal' }
   | { kind: 'showSolution' }
-  | { kind: 'objective' }
+  | { kind: 'lesson' }
   | { kind: 'sandbox' }
   | { kind: 'level'; id: string }
   | { kind: 'sql'; sql: string };
@@ -37,7 +37,7 @@ export function parseConsoleInput(input: string): MetaCommand {
   if (lower === 'show solution' || lower === 'solution') {
     return { kind: 'showSolution' };
   }
-  if (lower === 'objective') return { kind: 'objective' };
+  if (lower === 'objective' || lower === 'lesson') return { kind: 'lesson' };
   if (lower === 'sandbox') return { kind: 'sandbox' };
 
   const levelMatch = /^(?:level\s+)?([a-z0-9][a-z0-9-]*)$/i.exec(trimmed);
@@ -61,7 +61,7 @@ export const HELP_TEXT = `Commands:
   levels             open level browser
   level <id>         jump to a level
   hint               show the current hint
-  objective          show the level introduction
+  lesson|objective     show the level introduction
   show goal          show expected result
   hide goal          hide the goal panel
   show solution      fill in the reference solution
