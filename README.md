@@ -17,7 +17,7 @@ Git tutorials often fail because you cannot see the commit graph. SQL tutorials 
 ## Features
 
 - **Sandbox** — free SQL against an in-browser SQLite database
-- **Leveled challenges** — intro, filters, joins, aggregation sequences
+- **Leveled challenges** — 14 sequences covering the full SQL syllabus: intro, filtering, joins, aggregation, functions & CASE, advanced joins, subqueries & CTEs, window functions, DDL, DML, set operations, views, indexes & performance, and transactions/ACID
 - **Goal compare** — result sets (columns + rows, optional order)
 - **Query pipeline** — FROM → JOIN → WHERE → GROUP → … stages light as you run
 - **Meta commands** — `levels`, `hint`, `show goal`, `show solution`, `reset`, `sandbox`, `help`
@@ -88,9 +88,11 @@ Pushes to `main` run `.github/workflows/deploy-pages.yml` (typecheck → test �
 
 - Level builder + import/export (like LGB `build level` / `import level`)
 - Shareable permalinks (`?level=...&sql=...`)
-- Window functions, subqueries/CTEs sequences
-- DML/DDL levels with table-state goals
 - Persian locale for dialogs
+- More depth per topic (e.g. `NOT LIKE`, `DISTINCT`, right/full join in dialects that have them, execution-plan readouts, normalization theory)
+
+Completed in the full-syllabus pass: window functions, subqueries/CTEs, DDL, DML,
+set operations, views, indexes/performance, and transactions/ACID sequences.
 
 ## License
 
