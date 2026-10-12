@@ -35,6 +35,8 @@ import {
   COFFEE_URL,
   GITHUB_URL,
 } from './components/WelcomeDialog';
+import { LevelCompleteModal } from './components/LevelCompleteModal';
+import { buildCandidates, completeToken } from './autocomplete';
 
 type Mode =
   | { kind: 'sandbox' }
@@ -93,6 +95,7 @@ export function App() {
   const [editor, setEditor] = useState('-- Write SQL here, or type help in the console\nSELECT * FROM customers;\n');
   const [showGoal, setShowGoal] = useState(true);
   const [showLevels, setShowLevels] = useState(false);
+  const [complete, setComplete] = useState<{ level: Level; next: Level | null } | null>(null);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(() => loadSolved());
   const [golf, setGolf] = useState<Record<string, number>>(() => loadGolf());
   const [pipeActive, setPipeActive] = useState<Set<PipeStage>>(new Set());
@@ -132,6 +135,8 @@ export function App() {
   const undoStack = useRef<Snapshot[]>([]);
   const modeRef = useRef(mode);
   modeRef.current = mode;
+  const editorRef = useRef<HTMLTextAreaElement | null>(null);
+  const pendingCursor = useRef<number | null>(null);
 
   const pushLog = useCallback((text: string, kind: LogLine['kind'] = 'info') => {
     setLines((prev) => [...prev, { id: logId++, text, kind }]);
@@ -182,8 +187,23 @@ export function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // After a Tab completion rewrites `editor`, the browser resets the caret to
+  // the end of the textarea. Restore it to the recorded position, but only
+  // after React has committed the new value (hence the [editor] dep).
+  useEffect(() => {
+    if (pendingCursor.current != null) {
+      const el = editorRef.current;
+      if (el) {
+        el.focus();
+        el.setSelectionRange(pendingCursor.current, pendingCursor.current);
+      }
+      pendingCursor.current = null;
+    }
+  }, [editor]);
+
   const enterLevel = useCallback(
     async (level: Level, withIntro: boolean) => {
+      setComplete(null);
       await applySeed(level.schema, level.seed);
       setMode({ kind: 'level', level, intro: withIntro });
       setShowGoal(true);
@@ -294,6 +314,7 @@ export function App() {
             } else {
               pushLog('Sequence complete. Open levels to keep going.', 'ok');
             }
+            setComplete({ level: m.level, next: nextLevel ?? null });
           } else if (!check.solved) {
             pushLog(check.reason, 'muted');
           }
@@ -620,17 +641,26 @@ export function App() {
                 {t('solution', locale)}
               </button>
               <span className="hint-text">
-                Ctrl/Cmd+Enter runs · console accepts meta commands
+                Ctrl/Cmd+Enter runs · Tab completes · console accepts meta commands
               </span>
             </div>
             <textarea
               className="sql-editor"
+              ref={editorRef}
               value={editor}
               onChange={(e) => setEditor(e.target.value)}
               onKeyDown={(e) => {
                 if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                   e.preventDefault();
                   runEditor();
+                } else if (e.key === 'Tab') {
+                  e.preventDefault();
+                  const start = e.currentTarget.selectionStart ?? editor.length;
+                  const res = completeToken(editor, start, buildCandidates(tables));
+                  if (res) {
+                    setEditor(res.value);
+                    pendingCursor.current = res.cursor;
+                  }
                 }
               }}
               spellCheck={false}
@@ -690,6 +720,23 @@ export function App() {
           }}
         />
       )}
+
+      <LevelCompleteModal
+        open={complete !== null}
+        levelName={complete ? localize(complete.level.name, locale) : ''}
+        nextName={complete?.next ? localize(complete.next.name, locale) : null}
+        locale={locale}
+        onNext={() => {
+          const nxt = complete?.next;
+          setComplete(null);
+          if (nxt) void enterLevel(nxt, true);
+        }}
+        onBrowse={() => {
+          setComplete(null);
+          setShowLevels(true);
+        }}
+        onClose={() => setComplete(null)}
+      />
     </div>
   );
 }

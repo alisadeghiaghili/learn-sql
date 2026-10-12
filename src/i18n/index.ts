@@ -49,6 +49,11 @@ export const UI_STRINGS: Record<Locale, Record<string, string>> = {
     matchedRows: 'ردیف‌های منطبق',
     welcomeTitle: 'به LearnSQL خوش آمدید',
     allLevelsTitle: 'فهرست سرفصل‌ها و مراحل',
+    completeTitle: 'سطح کامل شد',
+    completeMessage: '«{name}» را به پایان رساندی. برای بعدی آماده‌ای؟',
+    completeAllMessage: 'این آخرین سطح بود — کل مسیر را تکمیل کردی!',
+    nextLevelButton: 'بعدی: {name}',
+    browseLevels: 'مشاهدهٔ سطوح',
   },
   en: {
     sandbox: 'Sandbox',
@@ -86,6 +91,11 @@ export const UI_STRINGS: Record<Locale, Record<string, string>> = {
     matchedRows: 'Matched Rows',
     welcomeTitle: 'Welcome to LearnSQL',
     allLevelsTitle: 'Course Curriculum & Levels',
+    completeTitle: 'Level complete',
+    completeMessage: 'You cleared {name}. Ready for the next one?',
+    completeAllMessage: 'That was the last level — you finished the whole curriculum!',
+    nextLevelButton: 'Next: {name}',
+    browseLevels: 'Browse levels',
   },
   de: {
     sandbox: 'Sandkasten',
@@ -123,6 +133,11 @@ export const UI_STRINGS: Record<Locale, Record<string, string>> = {
     matchedRows: 'Übereinstimmende Zeilen',
     welcomeTitle: 'Willkommen bei LearnSQL',
     allLevelsTitle: 'Lehrplan & Level-Übersicht',
+    completeTitle: 'Level gelöst',
+    completeMessage: '„{name}" gemeistert. Bereit für das nächste?',
+    completeAllMessage: 'Das war das letzte Level — du hast den kompletten Kurs beendet!',
+    nextLevelButton: 'Weiter: {name}',
+    browseLevels: 'Level durchsuchen',
   },
 };
 
