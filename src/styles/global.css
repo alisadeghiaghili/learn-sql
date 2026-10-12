@@ -990,7 +990,7 @@ button:disabled {
   display: block;
 }
 
-/* ——— RStudio / Posit Style Cheat Sheet Diagrams ——— */
+/* ——— Visual Schematic Cheat Sheet Diagrams ——— */
 
 .cs-container {
   background: #0b1320;
@@ -1006,24 +1006,11 @@ button:disabled {
 .cs-title-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   border-bottom: 1px solid #1c2b3e;
   padding-bottom: 8px;
   margin-bottom: 12px;
   font-size: 13px;
   color: #e2e8f0;
-}
-
-.cs-badge-kind {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 2px 7px;
-  background: #142132;
-  border: 1px solid #2f4562;
-  border-radius: 4px;
-  color: #38bdf8;
-  font-weight: 600;
 }
 
 .cs-flow {

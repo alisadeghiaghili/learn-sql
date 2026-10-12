@@ -1,5 +1,5 @@
 /**
- * Intro / objective dialog with RStudio-style cheat sheet diagrams
+ * Intro / objective dialog with visual cheat sheet diagrams
  * and fluent trilingual support (fa, en, de).
  */
 

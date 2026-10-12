@@ -1,5 +1,5 @@
 /**
- * RStudio / dplyr cheat-sheet style schematic diagrams for SQL operations.
+ * Visual schematic diagrams for SQL operations.
  * Fluently localized in Persian (fa), English (en), and German (de).
  */
 
@@ -58,7 +58,6 @@ function KeyBadge({ val }: { val: string | number | null }) {
 
 const TEXTS: Record<Locale, Record<string, string>> = {
   fa: {
-    sheetBadge: 'چیت‌شیت به سبک RStudio',
     tblLeft: 'جدول A (سمت چپ / x)',
     tblRight: 'جدول B (سمت راست / y)',
     tblLeftPreserved: 'جدول A (چپ — محفوظ)',
@@ -93,7 +92,6 @@ const TEXTS: Record<Locale, Record<string, string>> = {
     setResult: 'خروجی',
   },
   en: {
-    sheetBadge: 'RStudio Style Cheat Sheet',
     tblLeft: 'Table A (Left / x)',
     tblRight: 'Table B (Right / y)',
     tblLeftPreserved: 'Table A (Left — Preserved)',
@@ -128,7 +126,6 @@ const TEXTS: Record<Locale, Record<string, string>> = {
     setResult: 'Result',
   },
   de: {
-    sheetBadge: 'RStudio Spickzettel-Stil',
     tblLeft: 'Tabelle A (Links / x)',
     tblRight: 'Tabelle B (Rechts / y)',
     tblLeftPreserved: 'Tabelle A (Links — Beibehalten)',
@@ -174,7 +171,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>SELECT name, city (Projection)</strong>
           </div>
           <div className="cs-flow">
@@ -235,7 +231,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>WHERE city = 'London' (Row Filter)</strong>
           </div>
           <div className="cs-flow">
@@ -294,7 +289,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>ORDER BY price DESC LIMIT 2</strong>
           </div>
           <div className="cs-flow">
@@ -362,7 +356,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>GROUP BY category (COUNT / SUM)</strong>
           </div>
           <div className="cs-flow">
@@ -429,7 +422,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>INNER JOIN (x, y)</strong>
           </div>
           <div className="cs-flow">
@@ -518,7 +510,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>LEFT JOIN (x, y)</strong>
           </div>
           <div className="cs-flow">
@@ -612,7 +603,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>RIGHT JOIN (x, y)</strong>
           </div>
           <div className="cs-flow">
@@ -706,7 +696,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>FULL OUTER JOIN (x, y)</strong>
           </div>
           <div className="cs-flow">
@@ -803,7 +792,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>CROSS JOIN (Cartesian Product)</strong>
           </div>
           <div className="cs-flow">
@@ -857,7 +845,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>SELF JOIN (employees e ⋈ employees m)</strong>
           </div>
           <div className="cs-flow">
@@ -940,7 +927,6 @@ function renderSetOpsDiagram(type: string, locale: Locale = 'fa') {
   return (
     <div className="cs-container">
       <div className="cs-title-bar">
-        <span className="cs-badge-kind">{txt.sheetBadge}</span>
         <strong>{opTitle}</strong>
       </div>
       <div className="cs-flow">
