@@ -114,11 +114,6 @@ export function WelcomeDialog({ onClose, onOpenLevels }: WelcomeDialogProps) {
               <img src={COFFEE_BUTTON_IMG} alt="Buy me a coffee" height={40} />
             </a>
           </p>
-
-          <p>
-            Toolbar: <Strong>Lesson</Strong> (replay level intro) ·{' '}
-            <Strong>GitHub</Strong> · <Strong>Buy me a coffee</Strong>.
-          </p>
         </div>
         <div className="modal-footer">
           <button type="button" onClick={onClose}>

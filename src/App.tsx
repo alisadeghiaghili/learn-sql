@@ -438,7 +438,7 @@ export function App() {
         </div>
         <div className="level-meta">
           {activeLevel
-            ? `${t('golf', locale)} ${golf[activeLevel.id] ?? statementsIssued} / ${t('par', locale)} ${activeLevel.golfPar ?? 1}`
+            ? `${t('golf', locale)}: ${golf[activeLevel.id] ?? statementsIssued} · ${t('par', locale)}: ${activeLevel.golfPar ?? 1}`
             : t('freePlay', locale)}
         </div>
         <div className="toolbar-actions">
@@ -689,6 +689,7 @@ export function App() {
       <LevelsModal
         open={showLevels}
         solvedIds={solvedIds}
+        golf={golf}
         currentId={activeLevel?.id ?? null}
         onClose={() => setShowLevels(false)}
         onSelect={(id) => {

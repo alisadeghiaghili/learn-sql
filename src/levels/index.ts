@@ -234,5 +234,38 @@ export function getSequenceForLevel(id: string): SequenceInfo | undefined {
   return sequences.find((s) => s.levels.some((l) => l.id === id));
 }
 
+/**
+ * Returns level difficulty 1-5 dots.
+ * If explicitly defined on level, uses it; otherwise calculates based on topic complexity.
+ */
+export function getLevelDifficulty(level: Level): 1 | 2 | 3 | 4 | 5 {
+  if (level.difficulty) return level.difficulty;
+  const seq = getSequenceForLevel(level.id);
+  const seqId = seq?.id ?? '';
+  switch (seqId) {
+    case 'intro':
+      return 1;
+    case 'filters':
+    case 'dml':
+    case 'ddl':
+      return 2;
+    case 'joins':
+    case 'groups':
+    case 'functions':
+    case 'set-ops':
+    case 'views':
+      return 3;
+    case 'advanced-joins':
+    case 'performance':
+    case 'transactions':
+      return 4;
+    case 'subqueries':
+    case 'window':
+      return 5;
+    default:
+      return 3;
+  }
+}
+
 export { shopSchema, shopSeed };
 export type { Level, SequenceInfo, Localized };

@@ -835,27 +835,189 @@ button:disabled {
   border-top: 1px solid var(--border);
 }
 
-.seq-block {
+.seq-block,
+.series-block {
   margin-bottom: 16px;
 }
 
-.seq-block h3 {
+.seq-block h3,
+.series-block h3 {
   color: var(--accent);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 13px;
   margin-bottom: 4px;
 }
 
-.seq-block .about {
+.seq-block .about,
+.series-block .about {
   color: var(--muted);
   font-size: 12px;
   margin-bottom: 8px;
 }
 
-.level-list {
+.pick-challenge-p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+/* Legend box matching learn-dvc */
+.legend-box {
+  border: 1px solid var(--border);
+  background: var(--base);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 0 0 16px;
+}
+
+.legend-title {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.legend-list {
+  margin: 0;
+  padding-inline-start: 16px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.legend-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Difficulty dots (1-5) matching learn-dvc */
+.diff-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.diff-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--muted);
+  box-sizing: border-box;
+  flex: 0 0 7px;
+}
+
+.diff-dot.on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.diff-dots-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.level-list {
+  display: grid;
+  gap: 6px;
+}
+
+/* Level row grid matching learn-dvc */
+.level-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: var(--base);
+  text-align: start;
+  width: 100%;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.level-row:hover {
+  border-color: var(--accent);
+  background: var(--raised);
+}
+
+.level-row.current {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.level-row.solved {
+  border-color: rgba(46, 196, 182, 0.45);
+}
+
+.level-row .id {
+  font-family: var(--mono);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.level-row .name {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.level-row .par-note {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.level-row .chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  color: var(--ink);
+}
+
+.level-row .chip.ok {
+  background: rgba(46, 196, 182, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .level-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'id dots'
+      'name name'
+      'par par';
+    gap: 4px 8px;
+  }
+  .level-row .id {
+    grid-area: id;
+  }
+  .level-row .name {
+    grid-area: name;
+  }
+  .level-row .par-note {
+    grid-area: par;
+  }
+  .level-row .chip {
+    grid-area: dots;
+    justify-self: end;
+  }
 }
 
 .level-item {

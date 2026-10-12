@@ -47,6 +47,8 @@ export interface Level {
   disabled?: string[];
   /** Statements that count toward golf (default: non-meta SQL). */
   golfPar?: number;
+  /** Level difficulty (1 to 5 dots), matching learn-dvc standard. */
+  difficulty?: 1 | 2 | 3 | 4 | 5;
 }
 
 export interface SequenceInfo {
