@@ -15,6 +15,8 @@ export interface DialogStep {
   command?: string;
   beforeMarkdowns?: string[];
   afterMarkdowns?: string[];
+  /** Optional schematic diagram matching RStudio cheat sheet style (e.g. 'inner-join', 'left-join', etc.) */
+  diagram?: string;
 }
 
 export interface Level {

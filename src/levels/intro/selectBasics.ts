@@ -1,5 +1,11 @@
 /**
  * Intro sequence — SELECT fundamentals.
+ *
+ * Pedagogical design:
+ * - Demystifying the relational model (tables, rows, attributes)
+ * - The declarative paradigm (specifying "what", not procedural loops)
+ * - Projection vs filtering
+ * - Relational order fallacy & sorting with ORDER BY
  */
 
 import { shopSchema, shopSeed } from '../shopSchema';
@@ -29,17 +35,33 @@ export const selectAll: Level = {
     {
       type: 'modal',
       markdowns: [
-        '## SELECT *',
-        'A table is a set of rows and columns. To read rows, you write a query.',
-        'The simplest query asks for every column of one table: `SELECT * FROM table_name`.',
-        'The schema panel on the left shows the shop database — customers, products, and orders.',
+        '## پایگاه داده چیست و زبان SQL چگونه فکر می‌کند؟',
+        'به دنیای جذاب پایگاه داده رابطه‌ای خوش آمدید! در پایگاه داده، اطلاعات در قالب **جدول‌ها (Tables)** ذخیره می‌شوند. هر جدول دارای:',
+        '- **ستون‌ها (Columns):** ویژگی‌های موجودیت (مانند نام، شهر، سال عضویت).',
+        '- **ردیف‌ها (Rows):** نمونه‌های واقعی داده (مانند تک‌تک مشتریان).',
+        'زبان SQL یک زبان **توصیفی (Declarative)** است؛ یعنی شما به پایگاه داده می‌گویید **«چه داده‌ای می‌خواهید»**، نه اینکه چطور حلقه بزند یا داده را جستجو کند!',
       ],
     },
     {
       type: 'modal',
       markdowns: [
-        'Return every row from `customers` to clear this level.',
-        'The goal panel shows the exact result we expect.',
+        '## دستور SELECT *',
+        'ساده‌ترین و پایه‌ای‌ترین کوئری در SQL استخراج تمام اطلاعات یک جدول است:',
+        '```sql',
+        'SELECT * FROM customers;',
+        '```',
+        '- کلمه کلیدی `SELECT`: ستون‌هایی که می‌خواهید را مشخص می‌کند.',
+        '- علامت ستاره `*`: یک کارت عام (Wildcard) است که می‌گوید «تمام ستون‌ها را برگردان».',
+        '- کلمه `FROM customers`: نام جدولی است که منبع داده است.',
+        '> 💡 **دیدگاه مهندسی:** در برنامه‌های واقعی تجاری، متخصصان از نوشتن `SELECT *` خودداری می‌کنند چون ستون‌های غیرضروری ترافیک شبکه را هدر می‌دهند و در صورت تغییر ستون‌ها کد را می‌شکنند. اما برای اکتشاف اولیه داده‌ها بی‌نظیر است.',
+      ],
+    },
+    {
+      type: 'modal',
+      markdowns: [
+        '## مأموریت این مرحله',
+        'تمام ردیف‌ها و ستون‌های جدول مشتریان (`customers`) را استخراج کنید.',
+        'پنل سمت چپ ساختار جدول‌های فروشگاه را نشان می‌دهد و پنل هدف (Goal) در سمت راست نتیجه مورد انتظار را نمایش می‌دهد.',
       ],
     },
   ],
@@ -69,16 +91,21 @@ export const selectColumns: Level = {
     {
       type: 'modal',
       markdowns: [
-        '## Project Columns',
-        'You rarely want every column. List only what you need after SELECT:',
-        '`SELECT name, city FROM customers`',
-        'Column order in your SELECT list becomes the result order.',
+        '## تصویربرداری ستون‌ها (Projection)',
+        'به ندرت پیش می‌آید که در گزارش‌های واقعی تمام ستون‌های یک جدول را بخواهید. به جای `*`، نام ستون‌های مد نظرتان را با ویرگول (`,`) جدا کنید:',
+        '```sql',
+        'SELECT name, city FROM customers;',
+        '```',
+        '- **ترتیب مهم است:** ترتیبی که در بخش `SELECT` می‌نویسید، دقیقاً ترتیب ستون‌های خروجی را تعیین می‌کند.',
+        '- این عمل در جبر رابطه‌ای «پروجکشن» نامیده می‌شود و سرعت انتقال داده‌ها را به شدت افزایش می‌دهد.',
       ],
     },
     {
       type: 'modal',
       markdowns: [
-        'Return only `name` and `city` from `customers`.',
+        '## مأموریت این مرحله',
+        'فقط دو ستون `name` و `city` را از جدول `customers` برگردانید.',
+        'سایر ستون‌ها (مانند شناسه و سال عضویت) باید از خروجی حذف شوند.',
       ],
     },
   ],
@@ -102,16 +129,22 @@ export const whereBasic: Level = {
     {
       type: 'modal',
       markdowns: [
-        '## WHERE',
-        'WHERE keeps only the rows that match a condition:',
-        "`SELECT name FROM customers WHERE city = 'London'`",
-        'Use `=` for equality. Text values go in single quotes.',
+        '## فیلتر کردن ردیف‌ها با شرط WHERE',
+        'تا اینجا ستون‌ها را فیلتر کردیم. اما چگونه ردیف‌ها را فیلتر کنیم؟',
+        'عبارت `WHERE` به موتور پایگاه داده می‌گوید قبل از نمایش نتایج، هر ردیف را با یک شرط منطقی بررسی کند و فقط ردیف‌های دارای شرایط معتبر را نگه دارد:',
+        '```sql',
+        "SELECT name FROM customers WHERE city = 'London';",
+        '```',
+        "> ⚠️ **دام مهم متنی:** در زبان استاندارد SQL مقادیر متنی (رشته‌ها) همیشه داخل کوتیشن تکی (`'London'`) قرار می‌گیرند. استفاده از گیومه جفتی برای نام ستون‌ها یا جداول است.",
+        '> 💡 از علامت مساوی `=` برای برابری، `<>` یا `!=` برای نابرابری، و `<` و `>` برای مقایسه‌های عددی استفاده می‌شود.',
       ],
     },
     {
       type: 'modal',
       markdowns: [
-        'Return the `name` of customers whose city is London.',
+        '## مأموریت این مرحله',
+        'نام مشتریانی را بیابید که شهر آن‌ها لندن (`city = \'London\'`) است.',
+        'خروجی فقط باید شامل یک ستون (`name`) باشد.',
       ],
     },
   ],
@@ -139,16 +172,23 @@ export const orderLimit: Level = {
     {
       type: 'modal',
       markdowns: [
-        '## ORDER BY and LIMIT',
-        '`ORDER BY price DESC` sorts from highest to lowest. Use `ASC` (default) for the reverse.',
-        '`LIMIT n` keeps only the first n rows after sorting.',
-        'When a level shows a numbered goal list, order matters.',
+        '## توهم ترتیب در SQL و ضرورت ORDER BY',
+        'یکی از مهم‌ترین مفاهیم تئوری پایگاه‌های داده رابطه‌ای این است: **جدول‌ها مجموعه‌های بدون ترتیب (Unordered Sets) هستند!**',
+        'هیچ تضمینی وجود ندارد که ردیف‌ها به ترتیب ورودشان خوانده شوند، مگر اینکه شما صریحاً با `ORDER BY` دستور مرتب‌سازی بدهید.',
+        '- `ORDER BY column ASC`: صعودی (پیش‌فرض، از کم به زیاد)',
+        '- `ORDER BY column DESC`: نزولی (از زیاد به کم)',
+        '### برش ردیف‌ها با LIMIT:',
+        'دستور `LIMIT n` تنها `n` ردیف اول خروجی نهایی را نگه می‌دارد (برای سناریوهایی مثل ۱۰ کالای برتر یا صفحه‌بندی وب‌سایت).',
       ],
     },
     {
       type: 'modal',
       markdowns: [
-        'Return `name` and `price` of the two most expensive products.',
+        '## مأموریت این مرحله',
+        'دو محصول گران‌قیمت فروشگاه را پیدا کنید:',
+        '1. انتخاب نام و قیمت: `SELECT name, price FROM products`',
+        '2. مرتب‌سازی از بیشترین قیمت به کمترین قیمت: `ORDER BY price DESC`',
+        '3. محدود کردن خروجی به ۲ محصول برتر: `LIMIT 2`',
       ],
     },
   ],

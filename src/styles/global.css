@@ -559,8 +559,8 @@ button:disabled {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 6px;
-  width: min(560px, 100%);
-  max-height: min(80vh, 640px);
+  width: min(680px, 100%);
+  max-height: min(88vh, 720px);
   display: flex;
   flex-direction: column;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
@@ -766,3 +766,240 @@ button:disabled {
 .coffee-btn img {
   display: block;
 }
+
+/* ——— RStudio / Posit Style Cheat Sheet Diagrams ——— */
+
+.cs-container {
+  background: #0b1320;
+  border: 1px solid #23354d;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 12px 0 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  font-family: var(--sans);
+  direction: ltr;
+}
+
+.cs-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1c2b3e;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #e2e8f0;
+}
+
+.cs-badge-kind {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  background: #142132;
+  border: 1px solid #2f4562;
+  border-radius: 4px;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.cs-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 6px 0;
+}
+
+.cs-table-card {
+  background: #141c27;
+  border: 1px solid #233246;
+  border-radius: 6px;
+  overflow: hidden;
+  min-width: 135px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.cs-table-card.result {
+  border-color: #2ec4b6;
+  background: #101c26;
+  box-shadow: 0 0 14px rgba(46, 196, 182, 0.18);
+}
+
+.cs-th-header {
+  background: #233246;
+  color: #f1f5f9;
+  font-weight: 600;
+  font-size: 11px;
+  padding: 5px 8px;
+  text-align: center;
+  border-bottom: 1px solid #33465e;
+}
+
+.cs-th-header.highlight {
+  background: #173252;
+  color: #38bdf8;
+  border-bottom-color: #2563eb;
+}
+
+.cs-th-header.result {
+  background: #0d4a46;
+  color: #2ec4b6;
+  border-bottom-color: #2ec4b6;
+}
+
+.cs-row-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 10px;
+  color: #94a3b8;
+  font-family: var(--mono);
+  border-bottom: 1px solid #1f2c3d;
+}
+
+.cs-table-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: var(--mono);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.cs-row:last-child {
+  border-bottom: none;
+}
+
+.cs-row.dropped {
+  opacity: 0.42;
+  background: rgba(239, 68, 68, 0.08);
+  text-decoration: line-through;
+}
+
+.cs-row.preserved {
+  background: rgba(56, 189, 248, 0.09);
+}
+
+.cs-row.null-padded {
+  background: rgba(244, 162, 97, 0.09);
+}
+
+.cs-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cs-badge.cs-null {
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px dashed #64748b;
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 9px;
+}
+
+.cs-drop-flag {
+  margin-left: auto;
+  font-size: 9px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cs-keep-flag {
+  margin-left: auto;
+  font-size: 9px;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.cs-symbol {
+  font-size: 18px;
+  font-weight: bold;
+  color: #f4a261;
+  padding: 0 2px;
+}
+
+.cs-arrow {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2ec4b6;
+  padding: 0 2px;
+}
+
+.cs-footer {
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: 1px solid #1c2b3e;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #cbd5e1;
+  direction: rtl;
+  text-align: right;
+}
+
+.cs-rule-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.cs-rule-text code {
+  color: #2ec4b6;
+  background: #182434;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+/* Callouts & Rich Typography in Modal */
+.lesson-callout {
+  background: rgba(46, 196, 182, 0.08);
+  border-right: 3px solid var(--accent);
+  border-left: none;
+  padding: 9px 12px;
+  border-radius: 5px 0 0 5px;
+  margin: 10px 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.lesson-callout.warning {
+  background: rgba(231, 111, 81, 0.1);
+  border-right-color: var(--danger);
+}
+
+.lesson-callout.tip {
+  background: rgba(244, 162, 97, 0.1);
+  border-right-color: var(--goal);
+}
+
+.lesson-list {
+  margin: 6px 0 10px;
+  padding-right: 20px;
+  padding-left: 0;
+}
+
+.lesson-list li {
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+

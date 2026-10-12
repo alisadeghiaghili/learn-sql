@@ -1,7 +1,10 @@
 /**
- * Advanced joins — CROSS, SELF, and (for dialects that lack RIGHT/FULL)
- * how to express them. SQLite has no RIGHT/FULL OUTER JOIN, so those are
- * taught via the LEFT-JOIN workarounds.
+ * Advanced joins — CROSS, SELF, RIGHT, and FULL OUTER JOIN.
+ *
+ * Pedagogical design:
+ * - Mental models with RStudio-style cheat sheet schematics
+ * - Combinatorics & performance pitfalls (Cartesian explosion)
+ * - Dialect differences & SQLite workarounds (industry practice)
  */
 import { shopSchema, shopSeed } from './shopSchema';
 import { employeesSchema, employeesSeed } from './customSchemas';
@@ -10,11 +13,11 @@ import type { Level } from './types';
 export const crossJoin: Level = {
   id: 'aj-cross',
   name: 'CROSS JOIN',
-  hint: 'SELECT c.name, p.name FROM customers c CROSS JOIN products p;',
+  hint: 'SELECT COUNT(*) AS pairs FROM customers c CROSS JOIN products p;',
   schema: shopSchema,
   seed: shopSeed,
   solution:
-    "SELECT COUNT(*) AS pairs FROM customers c CROSS JOIN products p;",
+    'SELECT COUNT(*) AS pairs FROM customers c CROSS JOIN products p;',
   golfPar: 1,
   goal: {
     type: 'result',
@@ -25,16 +28,28 @@ export const crossJoin: Level = {
   startDialog: [
     {
       type: 'modal',
+      diagram: 'cross-join',
       markdowns: [
-        '## CROSS JOIN',
-        'A `CROSS JOIN` pairs EVERY row of the left table with EVERY row of the',
-        'right table — a cartesian product. 5 customers × 5 products = 25 pairs.',
-        'Useful for generating combinations (e.g. every customer × every plan).',
+        '## مفهوم ضرب دکارتی (Cartesian Product)',
+        'در تمام اتصال‌هایی که تاکنون دیدیم، یک شرط انطباق با `ON` وجود داشت. اما اگر هیچ شرطی نگذاریم چه می‌شود؟',
+        'دستور `CROSS JOIN` **تک‌تک ردیف‌های جدول اول را با تک‌تک ردیف‌های جدول دوم جفت می‌کند**.',
+        '- اگر جدول A دارای ۵ ردیف و جدول B دارای ۵ ردیف باشد، خروجی دقیقاً ۲۵ ردیف خواهد بود (۵ × ۵ = ۲۵).',
+        '- کاربرد واقعی: تولید تمام حالت‌های ممکن (مثلاً تمام سایزها × تمام رنگ‌های یک پیراهن، یا تمام کاربران × تمام پلن‌های اشتراک برای تست).',
+        '> ⚠️ **هشدار مرگبار عملکرد (Performance Trap):** اگر به اشتباه در یک کوئری بزرگ عبارت `ON` را فراموش کنید، ممکن است ناخواسته میلیاردها ردیف تولید کنید و سرور پایگاه داده از کار بیفتد!',
       ],
     },
     {
       type: 'modal',
-      markdowns: ['Count how many rows a `CROSS JOIN` of customers and products produces.'],
+      markdowns: [
+        '## مأموریت این مرحله',
+        'می‌خواهیم ببینیم اگر هر مشتری را با تک‌تک کالاهای فروشگاه جفت کنیم، چند جفت حاصل می‌شود:',
+        '```sql',
+        'SELECT COUNT(*) AS pairs',
+        'FROM customers c',
+        'CROSS JOIN products p;',
+        '```',
+        '- با استفاده از `COUNT(*)` و نام مستعار `pairs`، تعداد کل جفت‌های حاصل از ضرب دکارتی را بشمارید.',
+      ],
     },
   ],
 };
@@ -42,11 +57,11 @@ export const crossJoin: Level = {
 export const selfJoin: Level = {
   id: 'aj-self',
   name: 'SELF JOIN',
-  hint: 'SELECT e.name, m.name FROM employees e JOIN employees m ON e.manager_id = m.id;',
+  hint: 'SELECT e.name AS employee, m.name AS manager FROM employees e JOIN employees m ON e.manager_id = m.id ORDER BY e.id;',
   schema: employeesSchema,
   seed: employeesSeed,
   solution:
-    "SELECT e.name AS employee, m.name AS manager FROM employees e JOIN employees m ON e.manager_id = m.id ORDER BY e.id;",
+    'SELECT e.name AS employee, m.name AS manager FROM employees e JOIN employees m ON e.manager_id = m.id ORDER BY e.id;',
   golfPar: 1,
   goal: {
     type: 'result',
@@ -63,15 +78,39 @@ export const selfJoin: Level = {
   startDialog: [
     {
       type: 'modal',
+      diagram: 'self-join',
       markdowns: [
-        '## SELF JOIN',
-        'A table can be joined to ITSELF. Alias it twice: `employees e` (the',
-        'worker) and `employees m` (the manager), then match on the foreign key.',
+        '## مفهوم SELF JOIN: اتصال یک جدول به خودش!',
+        'گاهی رابطه‌های داده‌ای درون خود یک جدول قرار دارند؛ مشهورترین مثال آن **چارت سازمانی (سلسله‌مراتب کارمندان و مدیران)** است.',
+        'در جدول `employees`، ستونی به نام `manager_id` وجود دارد که به ستون `id` در *همین جدول* ارجاع می‌دهد (مدیر خودش یک کارمند است!).',
+        'چگونه نام کارمند و نام مدیرش را کنار هم بیاوریم؟',
+        '- باید جدول `employees` را با خودش متصل کنیم!',
+        '- موتور SQL برای تمایز قائل شدن بین دو نقش جدول، نیازمند **نام مستعار (Alias)** است: یکی در نقش کارمند (`e`) و دیگری در نقش مدیر (`m`).',
       ],
     },
     {
       type: 'modal',
-      markdowns: ['List each employee and their manager, ordered by employee id.'],
+      markdowns: [
+        '## ساختار دستور SELF JOIN',
+        '```sql',
+        'SELECT e.name AS employee, m.name AS manager',
+        'FROM employees e',
+        'JOIN employees m ON e.manager_id = m.id;',
+        '```',
+        '- `employees e`: نسخه اول جدول که کارمندان را نشان می‌دهد.',
+        '- `employees m`: نسخه دوم جدول که نقش مدیر را ایفا می‌کند.',
+        '- شرط اتصال: کلید خارجی مدیر در ردیف کارمند (`e.manager_id`) باید با شناسه در ردیف مدیر (`m.id`) برابر باشد.',
+        '> 💡 توجه: از آنجا که CEO مدیری ندارد (`manager_id` او NULL است)، در یک `INNER JOIN` در خروجی نمی‌آید.',
+      ],
+    },
+    {
+      type: 'modal',
+      markdowns: [
+        '## مأموریت این مرحله',
+        'نام هر کارمند را به عنوان `employee` و نام مدیر او را به عنوان `manager` استخراج کنید.',
+        '- اتصال خودکار با نام‌های مستعار `e` و `m` بر اساس `e.manager_id = m.id`',
+        '- مرتب‌سازی بر اساس شناسه کارمند: `ORDER BY e.id`',
+      ],
     },
   ],
 };
@@ -79,11 +118,11 @@ export const selfJoin: Level = {
 export const rightJoin: Level = {
   id: 'aj-right',
   name: 'RIGHT JOIN (via LEFT)',
-  hint: "SELECT o.id, c.name FROM orders o RIGHT JOIN customers c ON ...;",
+  hint: 'SELECT customers.id AS customer_id, orders.id AS order_id FROM customers LEFT JOIN orders ON orders.customer_id = customers.id ORDER BY customers.id;',
   schema: shopSchema,
   seed: shopSeed,
   solution:
-    "SELECT customers.id AS customer_id, orders.id AS order_id FROM customers LEFT JOIN orders ON orders.customer_id = customers.id ORDER BY customers.id;",
+    'SELECT customers.id AS customer_id, orders.id AS order_id FROM customers LEFT JOIN orders ON orders.customer_id = customers.id ORDER BY customers.id;',
   golfPar: 1,
   goal: {
     type: 'result',
@@ -100,17 +139,30 @@ export const rightJoin: Level = {
   startDialog: [
     {
       type: 'modal',
+      diagram: 'right-join',
       markdowns: [
-        '## RIGHT JOIN',
-        '`RIGHT JOIN` keeps every row of the RIGHT table, filling the left with',
-        'NULL. **SQLite has no RIGHT JOIN** — express it by swapping the tables',
-        'and using `LEFT JOIN`. (Here every customer has an order, so the result',
-        'looks full; the *form* is what matters.)',
+        '## مفهوم RIGHT JOIN و رازهای پایگاه داده در دنیای واقعی',
+        '`RIGHT JOIN` قرینه و آینه تمام‌نمای `LEFT JOIN` است: تمام ردیف‌های جدول سمت راست حفظ می‌شوند و اگر جدول چپ انطباقی نداشت، ستون‌هایش `NULL` می‌گیرند.',
+        'اما یک نکته بسیار مهم مهندسی وجود دارد:',
+        '> ⚠️ **موتور SQLite دستور RIGHT JOIN را به صورت محلی ندارد!** بسیاری از پایگاه‌های داده سبک و ابزارهای تحلیلی دستور RIGHT JOIN را پشتیبانی نمی‌کنند.',
+        '### راه‌حل استاندارد چیست؟',
+        'هر کوئری `A RIGHT JOIN B` از نظر ریاضی و منطقی معادل است با `B LEFT JOIN A`!',
+        'تنها کافی است جای دو جدول را عوض کنید و از `LEFT JOIN` استفاده نمایید.',
       ],
     },
     {
       type: 'modal',
-      markdowns: ['Using a LEFT JOIN, list every customer with their order ids, ordered by customer id.'],
+      markdowns: [
+        '## مأموریت این مرحله',
+        'هدف این است که نشان دهید چگونه می‌توان اتصال را به گونه‌ای نوشت که تمام مشتریان حفظ شوند (با استفاده از `LEFT JOIN`):',
+        '```sql',
+        'SELECT customers.id AS customer_id, orders.id AS order_id',
+        'FROM customers',
+        'LEFT JOIN orders ON orders.customer_id = customers.id',
+        'ORDER BY customers.id;',
+        '```',
+        'این کوئری تمام مشتریان را با سفارش‌هایشان فهرست می‌کند و خروجی را مرتب می‌نماید.',
+      ],
     },
   ],
 };
@@ -122,7 +174,7 @@ export const fullJoin: Level = {
   schema: employeesSchema,
   seed: employeesSeed,
   solution:
-    "SELECT e.id AS id, e.name, m.name AS manager FROM employees e LEFT JOIN employees m ON e.manager_id = m.id UNION SELECT e.id, e.name, m.name FROM employees e LEFT JOIN employees m ON e.manager_id = m.id;",
+    'SELECT e.id AS id, e.name, m.name AS manager FROM employees e LEFT JOIN employees m ON e.manager_id = m.id UNION SELECT e.id, e.name, m.name FROM employees e LEFT JOIN employees m ON e.manager_id = m.id;',
   golfPar: 2,
   goal: {
     type: 'result',
@@ -140,17 +192,29 @@ export const fullJoin: Level = {
   startDialog: [
     {
       type: 'modal',
+      diagram: 'full-join',
       markdowns: [
-        '## FULL OUTER JOIN',
-        '`FULL OUTER JOIN` keeps ALL rows from both sides. **SQLite has none.**',
-        'Build it as `LEFT JOIN a b ... UNION LEFT JOIN b a ...` — the union of',
-        'both directions captures every row, NULL-filled where there is no match.',
-        'The CEO has no manager, so their manager column is NULL.',
+        '## مفهوم FULL OUTER JOIN (جامع‌ترین اتصال)',
+        'گاهی در تطبیق داده‌ها (مانند مغایرت‌گیری مالی بین صورت‌حساب بانکی و سیستم حسابداری) نمی‌خواهید حتی یک ردیف از هیچ‌کدام از دو جدول گم شود!',
+        '- در `FULL OUTER JOIN` تمام ردیف‌های جدول چپ **و** تمام ردیف‌های جدول راست حفظ می‌شوند.',
+        '- هر کجا جفتی وجود نداشته باشد، ستون طرف مقابل با `NULL` پر می‌شود.',
+        '> 💡 در پایگاه‌هایی که FULL JOIN ندارند (مانند SQLite)، توسعه‌دهندگان آن را با اجتماع دو اتصال چپ می‌سازند:',
+        '> `(A LEFT JOIN B) UNION (B LEFT JOIN A)`',
       ],
     },
     {
       type: 'modal',
-      markdowns: ['Produce a full-outer-join of employees to their manager: every employee, manager or NULL.'],
+      markdowns: [
+        '## چالش این مرحله',
+        'در جدول `employees`، مدیرعامل (`CEO`) هیچ مدیری ندارد، بنابراین در یک اتصال معمولی حذف می‌شود.',
+        'با اتصال کامل، می‌خواهیم مطمئن شویم همه کارکنان (حتی مدیرعامل با مدیر `NULL`) در خروجی ظاهر می‌شوند:',
+        '```sql',
+        'SELECT e.id AS id, e.name, m.name AS manager',
+        'FROM employees e',
+        'LEFT JOIN employees m ON e.manager_id = m.id;',
+        '```',
+        'ستون‌های `id`، `name`، و `manager` را استخراج کنید.',
+      ],
     },
   ],
 };
