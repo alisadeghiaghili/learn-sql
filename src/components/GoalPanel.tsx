@@ -1,10 +1,12 @@
 /**
  * Goal panel — expected result preview and win status.
+ * Fluently localized in Persian (fa), English (en), and German (de).
  */
 
 import type { WinCheck, WinCondition } from '../engine/types';
 import type { Level } from '../levels/types';
 import { localize } from '../levels/types';
+import { type Locale, t } from '../i18n';
 import { ResultGrid } from './ResultGrid';
 
 interface GoalPanelProps {
@@ -13,6 +15,7 @@ interface GoalPanelProps {
   visible: boolean;
   solved: boolean;
   cellMatches?: boolean[][] | undefined;
+  locale?: Locale;
 }
 
 function goalPreview(condition: WinCondition) {
@@ -46,16 +49,21 @@ export function GoalPanel({
   visible,
   solved,
   cellMatches,
+  locale = 'fa',
 }: GoalPanelProps) {
   if (!visible || !level) {
     return (
       <aside className="panel goal-panel">
         <div className="panel-header">
-          <span>goal</span>
+          <span>{t('goal', locale)}</span>
           <span>hidden</span>
         </div>
         <div className="empty-state">
-          Run <code>show goal</code> or click Goal in the toolbar.
+          {locale === 'de'
+            ? 'Ziel ausgeblendet. Klicken Sie in der Symbolleiste auf Ziel.'
+            : locale === 'en'
+            ? 'Goal hidden. Click Goal in the toolbar to display.'
+            : 'هدف مخفی است. روی دکمه هدف در نوار بالا کلیک کنید.'}
         </div>
       </aside>
     );
@@ -66,7 +74,7 @@ export function GoalPanel({
   return (
     <aside className={`panel goal-panel${solved ? ' solved' : ''}`}>
       <div className="panel-header">
-        <span>goal</span>
+        <span>{t('goal', locale)}</span>
         <span>{level.goal.type}</span>
       </div>
       <div className="goal-body">
@@ -74,14 +82,18 @@ export function GoalPanel({
           className={`goal-status ${solved ? 'solved' : win ? 'fail' : ''}`}
         >
           {solved
-            ? 'Solved — result matches the goal.'
+            ? t('solvedTitle', locale)
             : win
               ? win.reason
-              : 'Match this result to clear the level.'}
+              : locale === 'de'
+              ? 'Erreichen Sie dieses Ergebnis, um das Level zu beenden.'
+              : locale === 'en'
+              ? 'Match this result to clear the level.'
+              : 'برای قبولی در این مرحله، خروجی کوئری خود را با این جدول تطبیق دهید.'}
         </div>
         <ResultGrid result={preview} cellMatches={cellMatches} />
         <div className="goal-status">
-          {localize(level.hint)}
+          {localize(level.hint, locale)}
         </div>
       </div>
     </aside>

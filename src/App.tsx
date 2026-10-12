@@ -4,7 +4,7 @@
  * Modes: sandbox (free play) and level challenges (goal compare).
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createDatabase, type LearnSqlDb } from './engine/db';
 import { checkWin } from './engine/compare';
 import type { QueryResult, TableInfo, WinCheck } from './engine/types';
@@ -17,6 +17,7 @@ import {
   type Level,
 } from './levels';
 import { localize } from './levels/types';
+import { LOCALES, type Locale, t } from './i18n';
 import {
   HELP_TEXT,
   parseConsoleInput,
@@ -97,6 +98,29 @@ export function App() {
   const [pipeActive, setPipeActive] = useState<Set<PipeStage>>(new Set());
   const [pipeHighlight, setPipeHighlight] = useState<number | null>(null);
   const [statementsIssued, setStatementsIssued] = useState(0);
+  const [locale, setLocale] = useState<Locale>(() => {
+    try {
+      const saved = localStorage.getItem('learnsql.lang') as Locale;
+      if (saved === 'fa' || saved === 'en' || saved === 'de') return saved;
+    } catch {}
+    return 'fa';
+  });
+
+  const changeLocale = useCallback((newLoc: Locale) => {
+    setLocale(newLoc);
+    try {
+      localStorage.setItem('learnsql.lang', newLoc);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = locale === 'fa' ? 'rtl' : 'ltr';
+  }, [locale]);
+
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
   const [showWelcome, setShowWelcome] = useState(() => {
     try {
       return !new URLSearchParams(window.location.search).has('NODEMO');
@@ -381,10 +405,6 @@ export function App() {
   const activeLevel = mode.kind === 'level' ? mode.level : null;
   const showIntro = mode.kind === 'level' && mode.intro;
 
-  const goalMatchLabel = useMemo(() => {
-    if (!activeLevel) return null;
-    return localize(activeLevel.name);
-  }, [activeLevel]);
 
   return (
     <div className="app">
@@ -393,58 +413,184 @@ export function App() {
           LEARN<span>SQL</span>
         </div>
         <div className="level-title">
-          {activeLevel ? localize(activeLevel.name) : 'Sandbox'}
+          {activeLevel ? localize(activeLevel.name, locale) : t('sandbox', locale)}
         </div>
         <div className="level-meta">
           {activeLevel
-            ? `golf ${golf[activeLevel.id] ?? statementsIssued} / par ${activeLevel.golfPar ?? 1}`
-            : 'free play'}
-          {goalMatchLabel ? '' : ''}
+            ? `${t('golf', locale)} ${golf[activeLevel.id] ?? statementsIssued} / ${t('par', locale)} ${activeLevel.golfPar ?? 1}`
+            : t('freePlay', locale)}
         </div>
         <div className="toolbar-actions">
-          <button type="button" onClick={() => setShowLevels(true)}>
-            Levels
-          </button>
-          <button type="button" onClick={() => setShowGoal((g) => !g)}>
-            Goal
-          </button>
+          {/* Language dropdown matching learn-dvc */}
+          <div className="lang-menu">
+            <button
+              type="button"
+              className="lang-btn"
+              onClick={() => setIsLangOpen((o) => !o)}
+              aria-haspopup="menu"
+              aria-expanded={isLangOpen}
+              aria-label={t('language', locale)}
+            >
+              <span>{locale.toUpperCase()}</span>
+              <span className="lang-caret" aria-hidden="true"></span>
+            </button>
+            <div
+              className={`lang-dropdown ${isLangOpen ? 'is-open' : ''}`}
+              role="menu"
+              hidden={!isLangOpen}
+            >
+              {LOCALES.map((l) => (
+                <button
+                  key={l.code}
+                  type="button"
+                  className={`lang-option${locale === l.code ? ' on' : ''}`}
+                  onClick={() => {
+                    changeLocale(l.code);
+                    setIsLangOpen(false);
+                  }}
+                  role="menuitem"
+                  aria-checked={locale === l.code}
+                >
+                  <span>{l.label}</span>
+                  <span style={{ opacity: 0.7, fontSize: 11 }}>{l.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Responsive nav toggle */}
           <button
             type="button"
-            onClick={() => void handleMeta({ kind: 'lesson' })}
+            className="nav-toggle"
+            onClick={() => setIsNavOpen((o) => !o)}
+            aria-label={t('menuLabel', locale)}
+            aria-expanded={isNavOpen}
+            aria-controls="nav-drawer"
           >
-            Lesson
+            <span className="nav-bars" aria-hidden="true"></span>
           </button>
-          <button
-            type="button"
-            onClick={() => void handleMeta({ kind: 'hint' })}
+
+          {/* Navigation buttons matching learn-dvc */}
+          <div
+            className={`nav-drawer ${isNavOpen ? 'is-open' : ''}`}
+            id="nav-drawer"
           >
-            Hint
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleMeta({ kind: 'reset' })}
-          >
-            Reset
-          </button>
-          <button type="button" onClick={() => void enterSandbox()}>
-            Sandbox
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsNavOpen(false);
+                setShowLevels(true);
+              }}
+            >
+              {t('levels', locale)}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsNavOpen(false);
+                void handleMeta({ kind: 'lesson' });
+              }}
+            >
+              {t('lesson', locale)}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsNavOpen(false);
+                setShowGoal((g) => !g);
+              }}
+            >
+              {t('goal', locale)}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsNavOpen(false);
+                void handleMeta({ kind: 'hint' });
+              }}
+            >
+              {t('hint', locale)}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsNavOpen(false);
+                void handleMeta({ kind: 'showSolution' });
+              }}
+            >
+              {t('solution', locale)}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsNavOpen(false);
+                void handleMeta({ kind: 'undo' });
+              }}
+            >
+              {t('undo', locale)}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsNavOpen(false);
+                void handleMeta({ kind: 'reset' });
+              }}
+            >
+              {t('reset', locale)}
+            </button>
+            <button
+              type="button"
+              className="ghost"
+              onClick={() => {
+                setIsNavOpen(false);
+                void enterSandbox();
+              }}
+            >
+              {t('sandboxBtn', locale)}
+            </button>
+            <button
+              type="button"
+              className="help-btn"
+              onClick={() => {
+                setIsNavOpen(false);
+                setShowWelcome(true);
+              }}
+              title={t('help', locale)}
+              aria-label={t('help', locale)}
+            >
+              ?
+            </button>
+          </div>
+
           <a
-            className="toolbar-link"
+            className="tb-link gh"
             href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
+            title={t('githubTitle', locale)}
+            aria-label="GitHub repository"
           >
-            GitHub
+            <svg
+              className="gh-mark"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+              width="18"
+              height="18"
+            >
+              <path
+                fill="currentColor"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+              />
+            </svg>
           </a>
           <a
-            className="toolbar-link support"
+            className="tb-link support"
             href={COFFEE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            title="Buy me a coffee"
+            title={t('supportTitle', locale)}
           >
-            Buy me a coffee
+            {t('support', locale)}
           </a>
         </div>
       </header>
@@ -453,6 +599,7 @@ export function App() {
         <SchemaPanel
           tables={tables}
           onInsertTableName={(name) => setEditor((e) => e + name)}
+          locale={locale}
         />
 
         <section className="workbench">
@@ -470,7 +617,7 @@ export function App() {
                 type="button"
                 onClick={() => void handleMeta({ kind: 'showSolution' })}
               >
-                Solution
+                {t('solution', locale)}
               </button>
               <span className="hint-text">
                 Ctrl/Cmd+Enter runs · console accepts meta commands
@@ -503,6 +650,7 @@ export function App() {
           visible={showGoal && !!activeLevel}
           solved={solved}
           cellMatches={cellMatches}
+          locale={locale}
         />
       </div>
 
@@ -518,12 +666,14 @@ export function App() {
           setShowLevels(false);
           if (level) void enterLevel(level, true);
         }}
+        locale={locale}
       />
 
       {showIntro && activeLevel?.startDialog && (
         <DialogModal
-          title={localize(activeLevel.name)}
+          title={localize(activeLevel.name, locale)}
           steps={activeLevel.startDialog}
+          locale={locale}
           onClose={() => {
             const m = modeRef.current;
             if (m.kind === 'level') setMode({ ...m, intro: false });

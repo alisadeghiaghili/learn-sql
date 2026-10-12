@@ -1,11 +1,6 @@
 /**
  * Intro sequence — SELECT fundamentals.
- *
- * Pedagogical design:
- * - Demystifying the relational model (tables, rows, attributes)
- * - The declarative paradigm (specifying "what", not procedural loops)
- * - Projection vs filtering
- * - Relational order fallacy & sorting with ORDER BY
+ * Fluently localized in Persian (fa), English (en), and German (de).
  */
 
 import { shopSchema, shopSeed } from '../shopSchema';
@@ -13,8 +8,16 @@ import type { Level } from '../types';
 
 export const selectAll: Level = {
   id: 'intro-select-all',
-  name: 'Select Everything',
-  hint: 'Use SELECT * FROM customers;',
+  name: {
+    fa: 'انتخاب همه چیز (*)',
+    en: 'Select Everything',
+    de: 'Alles Auswählen (*)',
+  },
+  hint: {
+    fa: 'از دستور SELECT * FROM customers; استفاده کنید.',
+    en: 'Use SELECT * FROM customers;',
+    de: 'Verwenden Sie SELECT * FROM customers;',
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution: 'SELECT * FROM customers;',
@@ -34,43 +37,59 @@ export const selectAll: Level = {
   startDialog: [
     {
       type: 'modal',
-      markdowns: [
-        '## پایگاه داده چیست و زبان SQL چگونه فکر می‌کند؟',
-        'به دنیای جذاب پایگاه داده رابطه‌ای خوش آمدید! در پایگاه داده، اطلاعات در قالب **جدول‌ها (Tables)** ذخیره می‌شوند. هر جدول دارای:',
-        '- **ستون‌ها (Columns):** ویژگی‌های موجودیت (مانند نام، شهر، سال عضویت).',
-        '- **ردیف‌ها (Rows):** نمونه‌های واقعی داده (مانند تک‌تک مشتریان).',
-        'زبان SQL یک زبان **توصیفی (Declarative)** است؛ یعنی شما به پایگاه داده می‌گویید **«چه داده‌ای می‌خواهید»**، نه اینکه چطور حلقه بزند یا داده را جستجو کند!',
-      ],
+      markdowns: {
+        fa: [
+          '## پایگاه داده چیست و زبان SQL چگونه فکر می‌کند؟',
+          'در پایگاه‌های داده رابطه‌ای داده‌ها در جدول‌ها شامل ردیف‌ها و ستون‌ها نگهداری می‌شوند.',
+          'زبان SQL زبانی **توصیفی** است: به سیستم می‌گویید «چه داده‌ای می‌خواهید»، نه چگونگی جستجوی آن را.',
+          'دستور `SELECT * FROM table_name` تمام ستون‌های جدول را استخراج می‌کند.',
+        ],
+        en: [
+          '## How Relational Databases and SQL Work',
+          'In relational databases, information is organized into tables consisting of rows and columns.',
+          'SQL is **declarative**: you specify *what* data you need, leaving execution details to the engine.',
+          'The query `SELECT * FROM table_name` retrieves every column from that table.',
+        ],
+        de: [
+          '## Funktionsweise relationaler Datenbanken und SQL',
+          'In relationalen Datenbanken werden Daten in Tabellen mit Zeilen und Spalten strukturiert.',
+          'SQL ist **deklarativ**: Sie beschreiben, *welche* Daten Sie benötigen, nicht den genauen Suchalgorithmus.',
+          'Die Abfrage `SELECT * FROM table_name` liest alle Spalten der Tabelle aus.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## دستور SELECT *',
-        'ساده‌ترین و پایه‌ای‌ترین کوئری در SQL استخراج تمام اطلاعات یک جدول است:',
-        '```sql',
-        'SELECT * FROM customers;',
-        '```',
-        '- کلمه کلیدی `SELECT`: ستون‌هایی که می‌خواهید را مشخص می‌کند.',
-        '- علامت ستاره `*`: یک کارت عام (Wildcard) است که می‌گوید «تمام ستون‌ها را برگردان».',
-        '- کلمه `FROM customers`: نام جدولی است که منبع داده است.',
-        '> 💡 **دیدگاه مهندسی:** در برنامه‌های واقعی تجاری، متخصصان از نوشتن `SELECT *` خودداری می‌کنند چون ستون‌های غیرضروری ترافیک شبکه را هدر می‌دهند و در صورت تغییر ستون‌ها کد را می‌شکنند. اما برای اکتشاف اولیه داده‌ها بی‌نظیر است.',
-      ],
-    },
-    {
-      type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'تمام ردیف‌ها و ستون‌های جدول مشتریان (`customers`) را استخراج کنید.',
-        'پنل سمت چپ ساختار جدول‌های فروشگاه را نشان می‌دهد و پنل هدف (Goal) در سمت راست نتیجه مورد انتظار را نمایش می‌دهد.',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'تمام ردیف‌ها و ستون‌های جدول مشتریان (`customers`) را با دستور `SELECT *` استخراج کنید.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Retrieve every row and column from the `customers` table using `SELECT *`.',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Rufen Sie mit `SELECT *` alle Zeilen und Spalten aus der Tabelle `customers` ab.',
+        ],
+      },
     },
   ],
 };
 
 export const selectColumns: Level = {
   id: 'intro-select-columns',
-  name: 'Pick Columns',
-  hint: 'SELECT name, city FROM customers;',
+  name: {
+    fa: 'انتخاب ستون‌های مشخص',
+    en: 'Pick Columns',
+    de: 'Spalten Auswählen',
+  },
+  hint: {
+    fa: 'SELECT name, city FROM customers;',
+    en: 'SELECT name, city FROM customers;',
+    de: 'SELECT name, city FROM customers;',
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution: 'SELECT name, city FROM customers;',
@@ -90,31 +109,56 @@ export const selectColumns: Level = {
   startDialog: [
     {
       type: 'modal',
-      markdowns: [
-        '## تصویربرداری ستون‌ها (Projection)',
-        'به ندرت پیش می‌آید که در گزارش‌های واقعی تمام ستون‌های یک جدول را بخواهید. به جای `*`، نام ستون‌های مد نظرتان را با ویرگول (`,`) جدا کنید:',
-        '```sql',
-        'SELECT name, city FROM customers;',
-        '```',
-        '- **ترتیب مهم است:** ترتیبی که در بخش `SELECT` می‌نویسید، دقیقاً ترتیب ستون‌های خروجی را تعیین می‌کند.',
-        '- این عمل در جبر رابطه‌ای «پروجکشن» نامیده می‌شود و سرعت انتقال داده‌ها را به شدت افزایش می‌دهد.',
-      ],
+      markdowns: {
+        fa: [
+          '## تصویربرداری ستون‌ها (Projection)',
+          'به جای `*`، نام ستون‌های مورد نیاز را با ویرگول جدا کنید: `SELECT name, city FROM customers;`.',
+          'ترتیب ستون‌ها در بخش `SELECT`، ترتیب خروجی نهایی را تعیین می‌کند.',
+        ],
+        en: [
+          '## Column Projection',
+          'Instead of `*`, specify only the columns you require: `SELECT name, city FROM customers;`.',
+          'The order in which columns are listed dictates their appearance in the result set.',
+        ],
+        de: [
+          '## Spaltenprojektion',
+          'Geben Sie anstelle von `*` nur die benötigten Spalten an: `SELECT name, city FROM customers;`.',
+          'Die Reihenfolge der Spalten im SELECT-Teil bestimmt die Ausgabereihenfolge.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'فقط دو ستون `name` و `city` را از جدول `customers` برگردانید.',
-        'سایر ستون‌ها (مانند شناسه و سال عضویت) باید از خروجی حذف شوند.',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'فقط دو ستون `name` و `city` را از جدول `customers` برگردانید.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Return only the `name` and `city` columns from `customers`.',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Geben Sie nur die Spalten `name` und `city` aus der Tabelle `customers` zurück.',
+        ],
+      },
     },
   ],
 };
 
 export const whereBasic: Level = {
   id: 'intro-where',
-  name: 'Filter Rows',
-  hint: "SELECT name FROM customers WHERE city = 'London';",
+  name: {
+    fa: 'فیلتر ردیف‌ها با WHERE',
+    en: 'Filter Rows',
+    de: 'Zeilen Filtern mit WHERE',
+  },
+  hint: {
+    fa: "SELECT name FROM customers WHERE city = 'London';",
+    en: "SELECT name FROM customers WHERE city = 'London';",
+    de: "SELECT name FROM customers WHERE city = 'London';",
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution: "SELECT name FROM customers WHERE city = 'London';",
@@ -128,32 +172,65 @@ export const whereBasic: Level = {
   startDialog: [
     {
       type: 'modal',
-      markdowns: [
-        '## فیلتر کردن ردیف‌ها با شرط WHERE',
-        'تا اینجا ستون‌ها را فیلتر کردیم. اما چگونه ردیف‌ها را فیلتر کنیم؟',
-        'عبارت `WHERE` به موتور پایگاه داده می‌گوید قبل از نمایش نتایج، هر ردیف را با یک شرط منطقی بررسی کند و فقط ردیف‌های دارای شرایط معتبر را نگه دارد:',
-        '```sql',
-        "SELECT name FROM customers WHERE city = 'London';",
-        '```',
-        "> ⚠️ **دام مهم متنی:** در زبان استاندارد SQL مقادیر متنی (رشته‌ها) همیشه داخل کوتیشن تکی (`'London'`) قرار می‌گیرند. استفاده از گیومه جفتی برای نام ستون‌ها یا جداول است.",
-        '> 💡 از علامت مساوی `=` برای برابری، `<>` یا `!=` برای نابرابری، و `<` و `>` برای مقایسه‌های عددی استفاده می‌شود.',
-      ],
+      markdowns: {
+        fa: [
+          '## فیلتر کردن ردیف‌ها با شرط WHERE',
+          'عبارت `WHERE` به موتور پایگاه داده می‌گوید ردیف‌ها را بر اساس یک شرط منطقی بسنجد:',
+          '```sql',
+          "SELECT name FROM customers WHERE city = 'London';",
+          '```',
+          '> ⚠️ **نکته:** مقادیر متنی (رشته‌ها) همیشه داخل کوتیشن تکی (`\'London\'`) قرار می‌گیرند.',
+        ],
+        en: [
+          '## Filtering Rows with WHERE',
+          'The `WHERE` clause filters rows against Boolean predicates:',
+          '```sql',
+          "SELECT name FROM customers WHERE city = 'London';",
+          '```',
+          "> ⚠️ **String Literal Rule:** Text values in SQL must be enclosed in single quotes (`'London'`).",
+        ],
+        de: [
+          '## Zeilen filtern mit WHERE',
+          'Die `WHERE`-Klausel filtert Zeilen anhand logischer Bedingungen:',
+          '```sql',
+          "SELECT name FROM customers WHERE city = 'London';",
+          '```',
+          "> ⚠️ **Textwerte:** Zeichenketten in SQL müssen in einfachen Anführungszeichen stehen (`'London'`).",
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'نام مشتریانی را بیابید که شهر آن‌ها لندن (`city = \'London\'`) است.',
-        'خروجی فقط باید شامل یک ستون (`name`) باشد.',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'نام مشتریانی را برگردانید که شهر آن‌ها لندن (`city = \'London\'`) است.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Return the name of customers whose city is London.',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Geben Sie den Namen aller Kunden aus, deren Stadt London ist.',
+        ],
+      },
     },
   ],
 };
 
 export const orderLimit: Level = {
   id: 'intro-order-limit',
-  name: 'Order and Limit',
-  hint: 'SELECT name, price FROM products ORDER BY price DESC LIMIT 2;',
+  name: {
+    fa: 'مرتب‌سازی و برش (ORDER BY و LIMIT)',
+    en: 'Order and Limit',
+    de: 'Sortieren und Begrenzen',
+  },
+  hint: {
+    fa: 'SELECT name, price FROM products ORDER BY price DESC LIMIT 2;',
+    en: 'SELECT name, price FROM products ORDER BY price DESC LIMIT 2;',
+    de: 'SELECT name, price FROM products ORDER BY price DESC LIMIT 2;',
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution:
@@ -171,25 +248,46 @@ export const orderLimit: Level = {
   startDialog: [
     {
       type: 'modal',
-      markdowns: [
-        '## توهم ترتیب در SQL و ضرورت ORDER BY',
-        'یکی از مهم‌ترین مفاهیم تئوری پایگاه‌های داده رابطه‌ای این است: **جدول‌ها مجموعه‌های بدون ترتیب (Unordered Sets) هستند!**',
-        'هیچ تضمینی وجود ندارد که ردیف‌ها به ترتیب ورودشان خوانده شوند، مگر اینکه شما صریحاً با `ORDER BY` دستور مرتب‌سازی بدهید.',
-        '- `ORDER BY column ASC`: صعودی (پیش‌فرض، از کم به زیاد)',
-        '- `ORDER BY column DESC`: نزولی (از زیاد به کم)',
-        '### برش ردیف‌ها با LIMIT:',
-        'دستور `LIMIT n` تنها `n` ردیف اول خروجی نهایی را نگه می‌دارد (برای سناریوهایی مثل ۱۰ کالای برتر یا صفحه‌بندی وب‌سایت).',
-      ],
+      markdowns: {
+        fa: [
+          '## مرتب‌سازی با ORDER BY و برش با LIMIT',
+          'جدول‌ها در SQL فاقد ترتیب درونی هستند. برای مرتب‌سازی:',
+          '- `ORDER BY column ASC`: صعودی (پیش‌فرض)',
+          '- `ORDER BY column DESC`: نزولی (از زیاد به کم)',
+          '- دستور `LIMIT n`: نگه‌داشتن فقط `n` ردیف اول خروجی.',
+        ],
+        en: [
+          '## ORDER BY and LIMIT',
+          'Relational tables have no inherent order. To sort rows deterministically:',
+          '- `ORDER BY column ASC`: Ascending (default)',
+          '- `ORDER BY column DESC`: Descending',
+          '- `LIMIT n`: Keeps only the top `n` rows after sorting.',
+        ],
+        de: [
+          '## ORDER BY und LIMIT',
+          'Relationale Tabellen besitzen keine feste Reihenfolge. Zum Sortieren:',
+          '- `ORDER BY column ASC`: Aufsteigend (Standard)',
+          '- `ORDER BY column DESC`: Absteigend',
+          '- `LIMIT n`: Begrenzt das Ergebnis auf die ersten `n` Zeilen.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'دو محصول گران‌قیمت فروشگاه را پیدا کنید:',
-        '1. انتخاب نام و قیمت: `SELECT name, price FROM products`',
-        '2. مرتب‌سازی از بیشترین قیمت به کمترین قیمت: `ORDER BY price DESC`',
-        '3. محدود کردن خروجی به ۲ محصول برتر: `LIMIT 2`',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'نام و قیمت ۲ محصول گران‌قیمت فروشگاه را بیابید (`ORDER BY price DESC LIMIT 2`).',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Return the name and price of the two most expensive products.',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Geben Sie Name und Preis der beiden teuersten Produkte aus.',
+        ],
+      },
     },
   ],
 };

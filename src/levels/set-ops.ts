@@ -1,19 +1,23 @@
 /**
  * Set operations — UNION, UNION ALL, INTERSECT, EXCEPT.
- *
- * Pedagogical design:
- * - Set theory intuition vs relational joins (vertical stacking vs horizontal stitching)
- * - Strict schema matching rules (column count and type affinity)
- * - RStudio-style cheat sheet diagrams
- * - Deduplication performance cost
+ * Fluently localized in Persian (fa), English (en), and German (de).
  */
+
 import { shopSchema, shopSeed } from './shopSchema';
 import type { Level } from './types';
 
 export const union: Level = {
   id: 'set-union',
-  name: 'UNION',
-  hint: 'SELECT city FROM customers UNION SELECT category FROM products;',
+  name: {
+    fa: 'اجتماع یکتا (UNION)',
+    en: 'UNION',
+    de: 'UNION (Vereinigung)',
+  },
+  hint: {
+    fa: 'SELECT city FROM customers UNION SELECT category FROM products ORDER BY 1;',
+    en: 'SELECT city FROM customers UNION SELECT category FROM products ORDER BY 1;',
+    de: 'SELECT city FROM customers UNION SELECT category FROM products ORDER BY 1;',
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution:
@@ -37,32 +41,56 @@ export const union: Level = {
     {
       type: 'modal',
       diagram: 'union',
-      markdowns: [
-        '## مفهوم عملیات مجموعه‌ای (Set Operations)',
-        'تا اینجا با `JOIN` جدول‌ها را **به صورت افقی (ستون در کنار ستون)** به هم می‌چسباندیم.',
-        'اما عملگرهای مجموعه‌ای داده‌ها را **به صورت عمودی (ردیف زیر ردیف)** ترکیب می‌کنند!',
-        'دستور `UNION` نتایج دو پرس‌وجو را مانند دو کیسه مهره در هم می‌ریزد و **تمام موارد تکراری را حذف می‌کند**.',
-        '> 💡 **قانون طلایی عملیات مجموعه‌ای:** هر دو پرس‌وجو در دو طرف `UNION` باید **دقیقاً تعداد ستون‌های برابر** و نوع داده‌های سازگار داشته باشند.',
-      ],
+      markdowns: {
+        fa: [
+          '## مفهوم عملیات مجموعه‌ای: دستور UNION',
+          '`UNION` ردیف‌های دو کوئری را به صورت عمودی زیر هم قرار داده و تکراری‌ها را حذف می‌کند.',
+          '> 💡 **قانون:** هر دو کوئری باید تعداد ستون‌ها و نوع داده‌های سازگار داشته باشند.',
+        ],
+        en: [
+          '## Set Operations: UNION',
+          '`UNION` stacks rows from two queries vertically and strips out duplicate records.',
+          '> 💡 **Rule:** Both queries must have matching column counts and compatible data types.',
+        ],
+        de: [
+          '## Mengenoperationen: UNION',
+          '`UNION` fasst Zeilen zweier Abfragen zusammen und entfernt Duplikate.',
+          '> 💡 **Regel:** Beide Abfragen müssen dieselbe Spaltenanzahl und kompatible Datentypen aufweisen.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'می‌خواهیم فهرستی یکتا از تمام واژه‌های مکانی و دسته‌بندی‌ها داشته باشیم:',
-        '- تمام شهرهای مشتریان (`SELECT city FROM customers`)',
-        '- تمام دسته‌بندی کالاها (`SELECT category FROM products`)',
-        '- ترکیب با `UNION` و مرتب‌سازی بر اساس ستون اول (`ORDER BY 1`).',
-        'هر مقدار تکراری به صورت خودکار حذف خواهد شد.',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'شهرهای مشتریان و دسته‌بندی محصولات را به شکل یکتا با `UNION` ترکیب کرده و بر اساس ستون اول مرتب نمایید (`ORDER BY 1`).',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Combine customer cities and product categories (distinct), sorted by column 1 (`ORDER BY 1`).',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Kombinieren Sie Kundenstädte und Produktkategorien (eindeutig), sortiert nach Spalte 1 (`ORDER BY 1`).',
+        ],
+      },
     },
   ],
 };
 
 export const unionAll: Level = {
   id: 'set-union-all',
-  name: 'UNION ALL',
-  hint: 'SELECT city FROM customers UNION ALL SELECT category FROM products;',
+  name: {
+    fa: 'اجتماع کامل با تکراری‌ها (UNION ALL)',
+    en: 'UNION ALL',
+    de: 'UNION ALL',
+  },
+  hint: {
+    fa: 'SELECT COUNT(*) AS total FROM (SELECT city FROM customers UNION ALL SELECT category FROM products);',
+    en: 'SELECT COUNT(*) AS total FROM (SELECT city FROM customers UNION ALL SELECT category FROM products);',
+    de: 'SELECT COUNT(*) AS total FROM (SELECT city FROM customers UNION ALL SELECT category FROM products);',
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution:
@@ -78,38 +106,53 @@ export const unionAll: Level = {
     {
       type: 'modal',
       diagram: 'union-all',
-      markdowns: [
-        '## تفاوت سرنوشت‌ساز UNION با UNION ALL',
-        'دستور `UNION` برای حذف تکراری‌ها مجبور است کل داده‌ها را مرتب کند یا در جدول درهم‌سازی (Hash Table) بگذارد؛ این کار در داده‌های میلیونی **بسیار پرهزینه و کند** است.',
-        'در مقابل، `UNION ALL` بدون هیچ بررسی اضافه، ردیف‌های کوئری دوم را مستقیماً به انتهای کوئری اول اضافه می‌کند:',
-        '- ردیف‌های تکراری دست‌نخورده باقی می‌مانند.',
-        '- **سرعت اجرای فوق‌العاده بالاتری دارد**.',
-        '> 💡 **توصیه دنیای واقعی مهندسی داده:** همیشه به صورت پیش‌فرض از `UNION ALL` استفاده کنید مگر اینکه واقعاً و صریحاً نیاز به حذف ردیف‌های تکراری داشته باشید.',
-      ],
+      markdowns: {
+        fa: [
+          '## تفاوت کلیدی UNION با UNION ALL',
+          '`UNION ALL` ردیف‌ها را بدون بررسی تکراری‌ها ترکیب می‌کند؛ بنابراین بسیار سریع‌تر است.',
+        ],
+        en: [
+          '## UNION vs UNION ALL',
+          '`UNION ALL` retains duplicate rows without sorting or deduplication overhead, making it significantly faster.',
+        ],
+        de: [
+          '## UNION im Vergleich zu UNION ALL',
+          '`UNION ALL` behält Duplikate bei und ist deutlich performanter, da kein Sortier- oder Deduplizierungsaufwand anfällt.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'مجموع شهرهای ۵ مشتری و ۵ دسته‌بندی کالا را با `UNION ALL` ترکیب کنید و تعداد کل ردیف‌ها را بشمارید:',
-        '```sql',
-        'SELECT COUNT(*) AS total',
-        'FROM (',
-        '  SELECT city FROM customers',
-        '  UNION ALL',
-        '  SELECT category FROM products',
-        ');',
-        '```',
-        'چون هیچ تکراری حذف نمی‌شود، دقیقاً ۵ + ۵ = ۱۰ ردیف به دست می‌آید.',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'تعداد کل ردیف‌های حاصل از `UNION ALL` بین شهرهای مشتریان و دسته‌بندی کالاها را با نام `total` بشمارید.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Count the total rows resulting from a `UNION ALL` of cities and categories, aliased as `total`.',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Zählen Sie alle Zeilen aus einem `UNION ALL` von Städten und Kategorien unter dem Alias `total`.',
+        ],
+      },
     },
   ],
 };
 
 export const intersect: Level = {
   id: 'set-intersect',
-  name: 'INTERSECT',
-  hint: 'SELECT customer_id FROM orders WHERE product_id = 1 INTERSECT SELECT customer_id FROM orders WHERE product_id = 2 ORDER BY 1;',
+  name: {
+    fa: 'اشتراک مجموعه‌ها (INTERSECT)',
+    en: 'INTERSECT',
+    de: 'INTERSECT (Schnittmenge)',
+  },
+  hint: {
+    fa: 'SELECT customer_id FROM orders WHERE product_id = 1 INTERSECT SELECT customer_id FROM orders WHERE product_id = 2 ORDER BY 1;',
+    en: 'SELECT customer_id FROM orders WHERE product_id = 1 INTERSECT SELECT customer_id FROM orders WHERE product_id = 2 ORDER BY 1;',
+    de: 'SELECT customer_id FROM orders WHERE product_id = 1 INTERSECT SELECT customer_id FROM orders WHERE product_id = 2 ORDER BY 1;',
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution:
@@ -125,35 +168,53 @@ export const intersect: Level = {
     {
       type: 'modal',
       diagram: 'intersect',
-      markdowns: [
-        '## مفهوم اشتراک مجموعه‌ها (INTERSECT)',
-        'دستور `INTERSECT` اشتراک ریاضی بین دو پرس‌وجو است: **تنها ردیف‌هایی که در هر دو کوئری دقیقاً وجود دارند** بازگردانده می‌شوند.',
-        'تصور کنید می‌خواهید بدانید: کدام مشتریان هم کیبورد (محصول ۱) و هم ماوس (محصول ۲) را خریده‌اند؟',
-        '- کوئری اول: مشتریانی که محصول ۱ را خریده‌اند.',
-        '- کوئری دوم: مشتریانی که محصول ۲ را خریده‌اند.',
-        '- عملگر `INTERSECT` نقطه اشتراک این دو گروه را پیدا می‌کند.',
-      ],
+      markdowns: {
+        fa: [
+          '## مفهوم اشتراک (INTERSECT)',
+          '`INTERSECT` فقط ردیف‌هایی را بازمی‌گرداند که در هر دو کوئری دقیقاً وجود داشته باشند.',
+        ],
+        en: [
+          '## Set Intersection (INTERSECT)',
+          '`INTERSECT` returns only values that appear in BOTH queries.',
+        ],
+        de: [
+          '## Schnittmenge (INTERSECT)',
+          '`INTERSECT` liefert nur Datensätze zurück, die in BEIDEN Abfragen vorhanden sind.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'شناسه مشتریانی که **هم محصول ۱ و هم محصول ۲** را خریده‌اند استخراج کنید:',
-        '```sql',
-        'SELECT customer_id FROM orders WHERE product_id = 1',
-        'INTERSECT',
-        'SELECT customer_id FROM orders WHERE product_id = 2',
-        'ORDER BY 1;',
-        '```',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'شناسه مشتریانی که هم محصول ۱ (کیبورد) و هم محصول ۲ (ماوس) را خریده‌اند پیدا کنید.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Find customers who ordered both the Keyboard (product 1) and the Mouse (product 2).',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Finden Sie Kunden, die sowohl die Tastatur (Produkt 1) als auch die Maus (Produkt 2) bestellt haben.',
+        ],
+      },
     },
   ],
 };
 
 export const except: Level = {
   id: 'set-except',
-  name: 'EXCEPT',
-  hint: 'SELECT name FROM customers EXCEPT SELECT customers.name FROM customers JOIN orders ON orders.customer_id = customers.id WHERE orders.product_id = 1 ORDER BY 1;',
+  name: {
+    fa: 'تفاضل مجموعه‌ها (EXCEPT)',
+    en: 'EXCEPT',
+    de: 'EXCEPT (Differenzmenge)',
+  },
+  hint: {
+    fa: 'SELECT name FROM customers EXCEPT SELECT customers.name FROM customers JOIN orders ON orders.customer_id = customers.id WHERE orders.product_id = 1 ORDER BY 1;',
+    en: 'SELECT name FROM customers EXCEPT SELECT customers.name FROM customers JOIN orders ON orders.customer_id = customers.id WHERE orders.product_id = 1 ORDER BY 1;',
+    de: 'SELECT name FROM customers EXCEPT SELECT customers.name FROM customers JOIN orders ON orders.customer_id = customers.id WHERE orders.product_id = 1 ORDER BY 1;',
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution:
@@ -173,30 +234,37 @@ export const except: Level = {
     {
       type: 'modal',
       diagram: 'except',
-      markdowns: [
-        '## مفهوم تفاضل مجموعه‌ها (EXCEPT یا MINUS)',
-        'دستور `EXCEPT` (که در برخی پایگاه‌ها مانند اوراکل `MINUS` نامیده می‌شود) تفاضل ریاضی است: **ردیف‌هایی که در مجموعه اول هستند اما در مجموعه دوم هرگز دیده نشده‌اند**.',
-        'کاربرد کلیدی در کسب‌وکار: "کدام مشتریان هرگز فلان کالا را نخریده‌اند؟"',
-        '- مجموعه A: همه مشتریان',
-        '- مجموعه B: مشتریانی که کیبورد خریده‌اند',
-        '- حاصل `A EXCEPT B`: مشتریانی که تا به حال کیبورد نخریده‌اند!',
-      ],
+      markdowns: {
+        fa: [
+          '## مفهوم تفاضل مجموعه‌ها (EXCEPT)',
+          '`A EXCEPT B` ردیف‌هایی را برمی‌گرداند که در مجموعه A هستند اما در مجموعه B هرگز وجود ندارند.',
+        ],
+        en: [
+          '## Set Difference (EXCEPT)',
+          '`A EXCEPT B` returns rows present in set A that do not exist in set B.',
+        ],
+        de: [
+          '## Differenzmenge (EXCEPT)',
+          '`A EXCEPT B` liefert Zeilen, die in Menge A vorkommen, aber in Menge B fehlen.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'نام تمام مشتریانی که **محصول شماره ۱ (Keyboard)** را نخریده‌اند فهرست کنید:',
-        '```sql',
-        'SELECT name FROM customers',
-        'EXCEPT',
-        'SELECT customers.name',
-        'FROM customers',
-        'JOIN orders ON orders.customer_id = customers.id',
-        'WHERE orders.product_id = 1',
-        'ORDER BY 1;',
-        '```',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'نام تمام مشتریانی را استخراج کنید که هرگز محصول ۱ (کیبورد) را سفارش نداده‌اند.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'List all customers who have NOT ordered the Keyboard (product 1).',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Listen Sie alle Kunden auf, die die Tastatur (Produkt 1) NICHT bestellt haben.',
+        ],
+      },
     },
   ],
 };

@@ -1,20 +1,31 @@
 /**
- * Level definition types for LearnSQL.
+ * Level definition types for LearnSQL with trilingual support (fa, en, de).
  */
 
 import type { WinCondition } from '../engine/types';
+import type { Locale } from '../i18n';
 
-/** Simple i18n map — English is the source of truth. */
-export type Localized = string | { en_US: string; [locale: string]: string };
+export type { Locale };
+
+/** Trilingual localization map. */
+export type Localized =
+  | string
+  | {
+      fa?: string;
+      en?: string;
+      de?: string;
+      en_US?: string;
+      [locale: string]: string | undefined;
+    };
 
 export interface DialogStep {
-  /** Modal text (markdown-ish plain text). */
+  /** Modal text (markdown-ish plain text). Can be array of strings or localized map. */
   type: 'modal' | 'demo';
-  markdowns: string[];
+  markdowns: string[] | { fa?: string[]; en?: string[]; de?: string[] };
   /** For `demo`: SQL shown / run before and after copy. */
   command?: string;
-  beforeMarkdowns?: string[];
-  afterMarkdowns?: string[];
+  beforeMarkdowns?: string[] | { fa?: string[]; en?: string[]; de?: string[] };
+  afterMarkdowns?: string[] | { fa?: string[]; en?: string[]; de?: string[] };
   /** Optional schematic diagram matching RStudio cheat sheet style (e.g. 'inner-join', 'left-join', etc.) */
   diagram?: string;
 }
@@ -45,7 +56,19 @@ export interface SequenceInfo {
   levels: Level[];
 }
 
-export function localize(text: Localized): string {
+export function localize(text: Localized, locale: Locale = 'fa'): string {
   if (typeof text === 'string') return text;
-  return text.en_US ?? Object.values(text)[0] ?? '';
+  if (locale === 'fa' && text.fa) return text.fa;
+  if (locale === 'de' && text.de) return text.de;
+  if (locale === 'en' && (text.en || text.en_US)) return text.en ?? text.en_US ?? '';
+  return text[locale] ?? text.en ?? text.en_US ?? text.fa ?? text.de ?? Object.values(text)[0] ?? '';
+}
+
+export function resolveMarkdowns(
+  lines?: string[] | { fa?: string[]; en?: string[]; de?: string[] },
+  locale: Locale = 'fa',
+): string[] {
+  if (!lines) return [];
+  if (Array.isArray(lines)) return lines;
+  return lines[locale] ?? lines.en ?? lines.fa ?? lines.de ?? [];
 }

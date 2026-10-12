@@ -1,10 +1,6 @@
 /**
  * Aggregation sequence — GROUP BY and HAVING.
- *
- * Pedagogical design:
- * - Split-Apply-Combine mental model
- * - The strict GROUP BY projection constraint
- * - Execution lifecycle: WHERE (pre-group) vs HAVING (post-aggregate)
+ * Fluently localized in Persian (fa), English (en), and German (de).
  */
 
 import { shopSchema, shopSeed } from '../shopSchema';
@@ -12,8 +8,16 @@ import type { Level } from '../types';
 
 export const groupBy: Level = {
   id: 'groups-count',
-  name: 'COUNT and GROUP BY',
-  hint: 'SELECT category, COUNT(*) FROM products GROUP BY category;',
+  name: {
+    fa: 'توابع تجمیعی و GROUP BY',
+    en: 'COUNT and GROUP BY',
+    de: 'COUNT und GROUP BY',
+  },
+  hint: {
+    fa: 'SELECT category, COUNT(*) FROM products GROUP BY category;',
+    en: 'SELECT category, COUNT(*) FROM products GROUP BY category;',
+    de: 'SELECT category, COUNT(*) FROM products GROUP BY category;',
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution: 'SELECT category, COUNT(*) FROM products GROUP BY category;',
@@ -30,45 +34,68 @@ export const groupBy: Level = {
   startDialog: [
     {
       type: 'modal',
-      markdowns: [
-        '## مدل ذهنی تجمیع داده‌ها (Split-Apply-Combine)',
-        'توابع تجمیعی (`COUNT`، `SUM`، `AVG`، `MIN`، `MAX`) صدها ردیف را دریافت کرده و آن‌ها را در **یک عدد خلاصه** فشرده می‌کنند.',
-        'اما اگر بخواهیم این خلاصه را **به تفکیک دسته‌ها** داشته باشیم چه؟',
-        'دستور `GROUP BY` الگوی سه مرحله‌ای معروف علم داده را اجرا می‌کند:',
-        '1. **تقسیم (Split):** ردیف‌ها بر اساس ستون مورد نظر (مثلاً دسته کالا) در سطل‌های مجزا قرار می‌گیرند.',
-        '2. **اعمال تابع (Apply):** روی هر سطل تابع تجمیعی اجرا می‌شود (مثلاً شمارش اقلام آن سطل).',
-        '3. **ترکیب (Combine):** خروجی به شکل یک جدول فشرده با یک ردیف به ازای هر دسته ارائه می‌شود.',
-      ],
+      markdowns: {
+        fa: [
+          '## مدل ذهنی تجمیع داده‌ها (GROUP BY)',
+          'توابع `COUNT`، `SUM`، `AVG`، `MIN`، `MAX` داده‌ها را در یک عدد خلاصه می‌کنند.',
+          'دستور `GROUP BY` ردیف‌ها را بر اساس ستونی مشخص به دسته‌های جداگانه تقسیم می‌کند تا تابع تجمیعی روی هر دسته جداگانه محاسبه شود.',
+          '> ⚠️ **قانون:** هر ستونی که در `SELECT` است اما در تابع تجمیعی نیست، باید حتماً در `GROUP BY` آورده شود.',
+        ],
+        en: [
+          '## Aggregation & GROUP BY',
+          'Functions like `COUNT`, `SUM`, `AVG`, `MIN`, `MAX` collapse rows into summary statistics.',
+          '`GROUP BY` partitions rows into distinct buckets so aggregates calculate per category.',
+          '> ⚠️ **The Golden Rule:** Every non-aggregated column in `SELECT` must appear in the `GROUP BY` clause.',
+        ],
+        de: [
+          '## Aggregation & GROUP BY',
+          'Funktionen wie `COUNT`, `SUM`, `AVG`, `MIN`, `MAX` fassen Zeilen zu Kennzahlen zusammen.',
+          '`GROUP BY` teilt Zeilen in Gruppen ein, sodass Aggregationen pro Kategorie berechnet werden.',
+          '> ⚠️ **Grundregel:** Jede nicht aggregierte Spalte in `SELECT` muss in der `GROUP BY`-Klausel aufgeführt sein.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## قانون طلایی GROUP BY',
-        '```sql',
-        'SELECT category, COUNT(*)',
-        'FROM products',
-        'GROUP BY category;',
-        '```',
-        '> ⚠️ **مهم‌ترین خطای مفهومی در SQL:** هر ستونی که در بخش `SELECT` می‌آورید اما درون یک تابع تجمیعی (مانند `COUNT` یا `SUM`) نیست، **باید حتماً در عبارت `GROUP BY` ذکر شده باشد**! اگر نام ستونی را بنویسید که در گروه‌بندی نیست، پایگاه داده نمی‌داند از میان ردیف‌های درون آن گروه، کدام مقدار را انتخاب کند.',
-      ],
-    },
-    {
-      type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'کالاهای جدول `products` را بر اساس ستون دسته‌بندی (`category`) گروه‌بندی کنید و تعداد کالاهای هر دسته را با `COUNT(*)` محاسبه نمایید.',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'کالاها را بر اساس دسته‌بندی (`category`) گروه‌بندی کرده و تعداد کالاهای هر دسته را با `COUNT(*)` بشمارید.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Group products by category and calculate how many products exist in each category.',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Gruppieren Sie Produkte nach Kategorie und ermitteln Sie die Anzahl der Produkte je Kategorie.',
+        ],
+      },
     },
   ],
 };
 
 export const havingSum: Level = {
   id: 'groups-having',
-  name: 'HAVING',
-  hint: `SELECT customer_id, SUM(quantity)
+  name: {
+    fa: 'فیلتر گروه‌ها با HAVING',
+    en: 'HAVING',
+    de: 'HAVING (Gruppenfilter)',
+  },
+  hint: {
+    fa: `SELECT customer_id, SUM(quantity)
 FROM orders
 GROUP BY customer_id
 HAVING SUM(quantity) > 2;`,
+    en: `SELECT customer_id, SUM(quantity)
+FROM orders
+GROUP BY customer_id
+HAVING SUM(quantity) > 2;`,
+    de: `SELECT customer_id, SUM(quantity)
+FROM orders
+GROUP BY customer_id
+HAVING SUM(quantity) > 2;`,
+  },
   schema: shopSchema,
   seed: shopSeed,
   solution: `SELECT customer_id, SUM(quantity)
@@ -90,36 +117,40 @@ HAVING SUM(quantity) > 2;`,
   startDialog: [
     {
       type: 'modal',
-      markdowns: [
-        '## راز تفاوت WHERE و HAVING در چرخه عمر کوئری',
-        'یکی از پرتکرارترین سؤالات در مصاحبه‌های فنی SQL تفاوت `WHERE` و `HAVING` است:',
-        '- عبارت `WHERE` **ردیف‌های خام** را قبل از گروه‌بندی و قبل از هرگونه محاسبه تجمیعی فیلتر می‌کند.',
-        '- عبارت `HAVING` **دسته‌های ساخته‌شده** را پس از محاسبه تابع تجمیعی فیلتر می‌کند.',
-        '> ⚠️ **چرا نمی‌توان نوشت WHERE SUM(quantity) > 2؟**',
-        '> زیرا موتور پایگاه داده ابتدا شرط‌های `WHERE` را اعمال می‌کند تا ردیف‌های لازم را بخواند. در آن لحظه هنوز هیچ گروهی تشکیل نشده و مقدار `SUM` هنوز اصلاً وجود خارجی ندارد!',
-      ],
+      markdowns: {
+        fa: [
+          '## تفاوت بنیادین WHERE و HAVING',
+          '- `WHERE`: ردیف‌های خام را قبل از گروه‌بندی فیلتر می‌کند.',
+          '- `HAVING`: دسته‌ها را پس از محاسبه تابع تجمیعی فیلتر می‌کند.',
+        ],
+        en: [
+          '## WHERE vs HAVING Lifecycle',
+          '- `WHERE`: Filters raw input rows before grouping.',
+          '- `HAVING`: Filters aggregated groups after the summary values are computed.',
+        ],
+        de: [
+          '## Unterschied zwischen WHERE und HAVING',
+          '- `WHERE`: Filtert Rohzeilen vor der Gruppierung.',
+          '- `HAVING`: Filtert aggregierte Gruppen nach der Berechnung der Kennzahlen.',
+        ],
+      },
     },
     {
       type: 'modal',
-      markdowns: [
-        '## ساختار فیلتر کردن گروه‌ها با HAVING',
-        '```sql',
-        'SELECT customer_id, SUM(quantity)',
-        'FROM orders',
-        'GROUP BY customer_id',
-        'HAVING SUM(quantity) > 2;',
-        '```',
-        '- گروه‌بندی بر اساس شناسه مشتری: `GROUP BY customer_id`',
-        '- محاسبه مجموع تعداد اقلام: `SUM(quantity)`',
-        '- فیلتر کردن مشتریانی که مجموع اقلام سفارش داده آن‌ها بیش از ۲ است: `HAVING SUM(quantity) > 2`',
-      ],
-    },
-    {
-      type: 'modal',
-      markdowns: [
-        '## مأموریت این مرحله',
-        'شناسه مشتری (`customer_id`) و مجموع تعداد اقلام سفارش داده شده (`SUM(quantity)`) را برای مشتریانی بیابید که در کل بیش از ۲ کالا خریده‌اند.',
-      ],
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'مشتریانی را پیدا کنید که مجموع تعداد سفارش‌های آن‌ها بیش از ۲ است (`HAVING SUM(quantity) > 2`).',
+        ],
+        en: [
+          '## Challenge Objective',
+          'Find customers whose total ordered quantity exceeds 2 (`HAVING SUM(quantity) > 2`).',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Ermitteln Sie Kunden, deren Gesamtbestellmenge größer als 2 ist (`HAVING SUM(quantity) > 2`).',
+        ],
+      },
     },
   ],
 };

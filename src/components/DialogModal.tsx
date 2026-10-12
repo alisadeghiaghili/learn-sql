@@ -1,37 +1,42 @@
 /**
  * Intro / objective dialog with RStudio-style cheat sheet diagrams
- * and pedagogically rich lesson formatting.
+ * and fluent trilingual support (fa, en, de).
  */
 
 import { useState } from 'react';
 import type { DialogStep } from '../levels/types';
+import { resolveMarkdowns } from '../levels/types';
+import { type Locale, t } from '../i18n';
 import { CheatSheetDiagram } from './CheatSheetDiagram';
 
 interface DialogModalProps {
   title: string;
   steps: DialogStep[];
   onClose: () => void;
+  locale?: Locale;
 }
 
-export function DialogModal({ title, steps, onClose }: DialogModalProps) {
+export function DialogModal({ title, steps, onClose, locale = 'fa' }: DialogModalProps) {
   const [index, setIndex] = useState(0);
   if (steps.length === 0) return null;
   const step = steps[Math.min(index, steps.length - 1)];
   const isLast = index >= steps.length - 1;
+  const isRtl = locale === 'fa';
 
-  const rawLines = step.beforeMarkdowns ?? step.markdowns;
+  const rawLines = resolveMarkdowns(step.beforeMarkdowns ?? step.markdowns, locale);
+  const afterLines = resolveMarkdowns(step.afterMarkdowns, locale);
 
   return (
     <div className="modal-backdrop">
-      <div className="modal" role="dialog" aria-label={title}>
+      <div className="modal" role="dialog" aria-label={title} style={{ direction: isRtl ? 'rtl' : 'ltr' }}>
         <div className="modal-header">
           <h2>{title}</h2>
           <span className="level-meta">
-            گام {index + 1} از {steps.length}
+            {t('stepOf', locale)} {index + 1} {t('of', locale)} {steps.length}
           </span>
         </div>
         <div className="modal-body">
-          {renderBlocks(rawLines, step.diagram)}
+          {renderBlocks(rawLines, step.diagram, locale)}
 
           {step.command && (
             <pre
@@ -44,18 +49,19 @@ export function DialogModal({ title, steps, onClose }: DialogModalProps) {
                 borderRadius: 5,
                 overflow: 'auto',
                 margin: '12px 0',
+                direction: 'ltr',
               }}
             >
               {step.command}
             </pre>
           )}
 
-          {step.afterMarkdowns && renderBlocks(step.afterMarkdowns)}
+          {afterLines.length > 0 && renderBlocks(afterLines, undefined, locale)}
         </div>
         <div className="modal-footer">
           {index > 0 && (
             <button type="button" onClick={() => setIndex((i) => i - 1)}>
-              قبلی (Back)
+              {t('back', locale)}
             </button>
           )}
           {!isLast ? (
@@ -64,11 +70,11 @@ export function DialogModal({ title, steps, onClose }: DialogModalProps) {
               className="primary"
               onClick={() => setIndex((i) => i + 1)}
             >
-              گام بعدی (Next)
+              {t('next', locale)}
             </button>
           ) : (
             <button type="button" className="primary" onClick={onClose}>
-              شروع حل تمرین (Start)
+              {t('start', locale)}
             </button>
           )}
         </div>
@@ -82,7 +88,6 @@ function hasRtl(text: string): boolean {
 }
 
 function renderInline(text: string) {
-  // Supports **bold** and `code`
   const tokens = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
   return tokens.map((token, i) => {
     if (token.startsWith('**') && token.endsWith('**') && token.length > 4) {
@@ -95,11 +100,10 @@ function renderInline(text: string) {
   });
 }
 
-function renderBlocks(lines: string[], diagramType?: string) {
+function renderBlocks(lines: string[], diagramType?: string, locale: Locale = 'fa') {
   const elements: React.ReactNode[] = [];
   let diagramRendered = false;
 
-  // If a diagram is explicitly provided on the step, render it after the first heading or at top
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
@@ -112,12 +116,12 @@ function renderBlocks(lines: string[], diagramType?: string) {
 
     const trimmed = line.trim();
 
-    // Check for inline diagram directive ::diagram <type>
+    // Inline diagram directive
     if (trimmed.startsWith('::diagram')) {
       const parts = trimmed.split(/\s+/);
       const dType = parts[1] || diagramType;
       if (dType) {
-        elements.push(<CheatSheetDiagram key={`diag-${i}`} type={dType} />);
+        elements.push(<CheatSheetDiagram key={`diag-${i}`} type={dType} locale={locale} />);
         diagramRendered = true;
       }
       i++;
@@ -141,9 +145,8 @@ function renderBlocks(lines: string[], diagramType?: string) {
         </h3>,
       );
 
-      // If diagram has not been rendered yet and was passed in step.diagram, place it right under the heading
       if (diagramType && !diagramRendered) {
-        elements.push(<CheatSheetDiagram key={`step-diag-${i}`} type={diagramType} />);
+        elements.push(<CheatSheetDiagram key={`step-diag-${i}`} type={diagramType} locale={locale} />);
         diagramRendered = true;
       }
 
@@ -177,10 +180,12 @@ function renderBlocks(lines: string[], diagramType?: string) {
         calloutText.includes('⚠️') ||
         calloutText.includes('هشدار') ||
         calloutText.includes('خطای رایج') ||
+        calloutText.includes('Warnung') ||
         calloutText.includes('Pitfall');
       const isTip =
         calloutText.includes('💡') ||
         calloutText.includes('نکته') ||
+        calloutText.includes('Hinweis') ||
         calloutText.includes('Tip');
 
       const calloutClass = isWarn
@@ -202,7 +207,7 @@ function renderBlocks(lines: string[], diagramType?: string) {
       continue;
     }
 
-    // Unordered lists (- or *)
+    // Unordered lists
     if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
       const listItems: string[] = [];
       while (
@@ -226,7 +231,7 @@ function renderBlocks(lines: string[], diagramType?: string) {
       continue;
     }
 
-    // Numbered lists (1. , 2. )
+    // Numbered lists
     if (/^\d+\.\s/.test(trimmed)) {
       const listItems: string[] = [];
       while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
@@ -247,7 +252,7 @@ function renderBlocks(lines: string[], diagramType?: string) {
       continue;
     }
 
-    // Code block inside markdown (``` ... ```)
+    // Code blocks
     if (trimmed.startsWith('```')) {
       const codeLines: string[] = [];
       i++;
@@ -255,7 +260,7 @@ function renderBlocks(lines: string[], diagramType?: string) {
         codeLines.push(lines[i]);
         i++;
       }
-      if (i < lines.length) i++; // skip closing ```
+      if (i < lines.length) i++;
       elements.push(
         <pre
           key={`codeblock-${i}`}
@@ -277,7 +282,7 @@ function renderBlocks(lines: string[], diagramType?: string) {
       continue;
     }
 
-    // Regular paragraph
+    // Paragraph
     elements.push(
       <p
         key={`p-${i}`}
@@ -293,9 +298,8 @@ function renderBlocks(lines: string[], diagramType?: string) {
     i++;
   }
 
-  // If diagram was not rendered yet and is provided, append at top/end
   if (diagramType && !diagramRendered) {
-    elements.unshift(<CheatSheetDiagram key="fallback-diag" type={diagramType} />);
+    elements.unshift(<CheatSheetDiagram key="fallback-diag" type={diagramType} locale={locale} />);
   }
 
   return elements;
