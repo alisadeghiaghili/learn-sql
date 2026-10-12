@@ -1,6 +1,6 @@
 /**
  * Aggregation sequence — GROUP BY and HAVING.
- * Refined with ELI pedagogical scaffolding, visual mental models,
+ * Rigorous pedagogical scaffolding, visual mental models,
  * common pitfalls, and fluent trilingual support (fa, en, de).
  */
 
@@ -38,7 +38,7 @@ export const groupBy: Level = {
       diagram: 'group-by',
       markdowns: {
         fa: [
-          '## سطح ۱: مدل ذهنی سطل‌های دسته‌بندی (Bucketing) 🪣',
+          '## مدل ذهنی سطل‌های دسته‌بندی (Bucketing) 🪣',
           'تصور کنید یک جعبه پر از میوه‌های درهم (سیب، پرتقال، موز) دارید و می‌خواهید بدانید از هر میوه چند عدد وجود دارد.',
           'شما دو کار انجام می‌دهید:',
           '1. **دسته‌بندی (GROUP BY):** چند سطل جداگانه برمی‌دارید و میوه‌های هم‌نوع را در سطل مشترک می‌اندازید.',
@@ -46,7 +46,7 @@ export const groupBy: Level = {
           'در دیاگرام بالا مشاهده می‌کنید که ۵ محصول پراکنده، به ۲ سطل دسته‌بندی شده و هر سطل با یک عدد آماری خلاصه شده است.',
         ],
         en: [
-          '## Level 1: The Sorting Buckets Analogy 🪣',
+          '## The Sorting Buckets Analogy 🪣',
           'Imagine sorting a mixed crate of fruit (apples, oranges, bananas) to take an inventory audit.',
           'You execute two distinct logical operations:',
           '1. **Bucketing (GROUP BY):** Place each item into its respective label bin.',
@@ -54,7 +54,7 @@ export const groupBy: Level = {
           'In the schematic above, 5 distinct product rows collapse into 2 category buckets, each holding an aggregated count.',
         ],
         de: [
-          '## Stufe 1: Das Sortiereimer-Modell 🪣',
+          '## Das Sortiereimer-Modell 🪣',
           'Stellen Sie sich vor, Sie sortieren eine gemischte Kiste Obst, um den Bestand zu zählen.',
           'Sie führen zwei Schritte aus:',
           '1. **Gruppieren (GROUP BY):** Gleiche Früchte landen im selben Eimer.',
@@ -67,7 +67,7 @@ export const groupBy: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: قانون طلایی ستون‌های مجاز در SELECT ⚡',
+          '## قانون طلایی ستون‌های مجاز در SELECT ⚡',
           '```sql',
           'SELECT category, COUNT(*) FROM products GROUP BY category;',
           '```',
@@ -76,7 +76,7 @@ export const groupBy: Level = {
           'اگر ستونی بنویسید که در هیچ‌کدام نیست (مثلاً `SELECT category, name, COUNT(*)` بدون ذکر name در گروپ‌بای)، سیستم گیج می‌شود، زیرا در هر سطل چندین نام مختلف وجود دارد و دیتابیس نمی‌داند کدام‌یک را باید نشان دهد!',
         ],
         en: [
-          '## Level 2: The Golden Relational Grouping Rule ⚡',
+          '## The Golden Relational Grouping Rule ⚡',
           '```sql',
           'SELECT category, COUNT(*) FROM products GROUP BY category;',
           '```',
@@ -85,7 +85,7 @@ export const groupBy: Level = {
           'Selecting a raw column like `SELECT category, name, COUNT(*)` without grouping by `name` is undefined, because a bucket contains multiple distinct names and SQL refuses to guess which name to pick.',
         ],
         de: [
-          '## Stufe 2: Die goldene Regel für GROUP BY ⚡',
+          '## Die goldene Regel für GROUP BY ⚡',
           '```sql',
           'SELECT category, COUNT(*) FROM products GROUP BY category;',
           '```',
@@ -159,7 +159,7 @@ HAVING SUM(quantity) > 2;`,
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۱: چرا WHERE نمی‌تواند همه جا فیلتر کند؟ ⏱️',
+          '## چرا WHERE نمی‌تواند همه جا فیلتر کند؟ ⏱️',
           'یک تفاوت کلیدی که همه متخصصان SQL باید بدانند، **ترتیب چرخه حیات اجرای کوئری** است:',
           '1. ابتدا دستور `FROM` جدول را باز می‌کند.',
           '2. سپس `WHERE` ردیف‌های نامربوط را حذف می‌کند.',
@@ -168,7 +168,7 @@ HAVING SUM(quantity) > 2;`,
           '> بنابراین، دستور `WHERE` قبل از تشکیل سطل‌ها اجرا می‌شود و اصلاً از مقدار `SUM` یا `COUNT` خبر ندارد! اگر بنویسید `WHERE SUM(quantity) > 2`، بلافاصله خطای `misuse of aggregate` دریافت خواهید کرد.',
         ],
         en: [
-          '## Level 1: The Execution Lifecycle (WHERE vs HAVING) ⏱️',
+          '## The Execution Lifecycle (WHERE vs HAVING) ⏱️',
           'A fundamental reality every data professional masters is the **logical query processing lifecycle**:',
           '1. `FROM` identifies source relations.',
           '2. `WHERE` filters raw individual rows.',
@@ -177,7 +177,7 @@ HAVING SUM(quantity) > 2;`,
           '> Because `WHERE` finishes executing *before* buckets even exist, it cannot filter by aggregate calculations! Attempting `WHERE SUM(x) > 2` triggers an immediate `misuse of aggregate` syntax error.',
         ],
         de: [
-          '## Stufe 1: Der Ausführungszyklus (WHERE vs HAVING) ⏱️',
+          '## Der Ausführungszyklus (WHERE vs HAVING) ⏱️',
           'Der entscheidende Unterschied liegt in der **logischen Ausführungsreihenfolge** von SQL:',
           '1. `FROM` lädt die Quelltabelle.',
           '2. `WHERE` filtert einzelne Rohzeilen.',
@@ -191,7 +191,7 @@ HAVING SUM(quantity) > 2;`,
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: ورود نگهبان دسته‌ها: بند HAVING 🛡️',
+          '## ورود نگهبان دسته‌ها: بند HAVING 🛡️',
           'بند `HAVING` دقیقاً بعد از محاسبه آمار دسته‌ها اجرا می‌شود و سطل‌های نامطلوب را فیلتر می‌کند.',
           '```sql',
           'SELECT customer_id, SUM(quantity)',
@@ -204,7 +204,7 @@ HAVING SUM(quantity) > 2;`,
           '- اگر می‌خواهید سطل‌ها را بر اساس حاصل توابع آماری فیلتر کنید ➔ از **`HAVING`** استفاده کنید.',
         ],
         en: [
-          '## Level 2: Enter HAVING — The Post-Aggregation Gatekeeper 🛡️',
+          '## Enter HAVING — The Post-Aggregation Gatekeeper 🛡️',
           'The `HAVING` clause runs strictly *after* grouping and aggregation have occurred, filtering the summarized buckets.',
           '```sql',
           'SELECT customer_id, SUM(quantity)',
@@ -217,7 +217,7 @@ HAVING SUM(quantity) > 2;`,
           '- Filtering collapsed summary buckets based on an aggregate result ➔ Use **`HAVING`**.',
         ],
         de: [
-          '## Stufe 2: HAVING — Der Filter für Gruppen 🛡️',
+          '## HAVING — Der Filter für Gruppen 🛡️',
           'Die `HAVING`-Klausel greift erst *nach* der Gruppenbildung und prüft das berechnete Aggregat.',
           '```sql',
           'SELECT customer_id, SUM(quantity)',

@@ -1,7 +1,7 @@
 /**
  * Subqueries & CTEs — scalar subqueries, IN/EXISTS, derived tables,
  * WITH (common table expressions), and recursive CTEs.
- * Refined with ELI pedagogical scaffolding, visual mental models,
+ * Rigorous pedagogical scaffolding, visual mental models,
  * common pitfalls, and fluent trilingual support (fa, en, de).
  */
 import { shopSchema, shopSeed } from './shopSchema';
@@ -42,14 +42,14 @@ export const scalarSubquery: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۱: کوئری درون کوئری دیگر (جعبه‌های تودرتو) 📦',
+          '## کوئری درون کوئری دیگر (جعبه‌های تودرتو) 📦',
           'تصور کنید به فروشگاهی رفته‌اید و می‌خواهید قیمت هر کالا را با **گران‌ترین کالای کل فروشگاه** مقایسه کنید.',
           'شما ابتدا در ذهن خود یک سوال جداگانه می‌پرسید: «گران‌ترین کلا کلاً چند است؟» (پاسخ: ۲۴۹ دلار).',
           'سپس برچسب ۲۴۹ دلار را برمی‌دارید و کنار قیمت تک‌تک کالاها می‌چسبانید.',
           'در SQL، به این سوال درونی که دقیقاً **یک عدد یا مقدار واحد (یک ردیف و یک ستون)** تولید می‌کند، **Scalar Subquery (زیرکوئری اسکالر)** می‌گویند.',
         ],
         en: [
-          '## Level 1: Nested Russian Dolls (The Mental Model) 📦',
+          '## Nested Russian Dolls (The Mental Model) 📦',
           'Imagine walking through a hardware store comparing every product\'s price against the **single most expensive item in the entire store**.',
           'Mentally, you solve this in two steps:',
           '1. You ask an isolated inner question: "What is the store-wide maximum price?" (Answer: $249).',
@@ -57,7 +57,7 @@ export const scalarSubquery: Level = {
           'In SQL, an inner query that returns strictly **one cell** (one row, one column) is known as a **Scalar Subquery**.',
         ],
         de: [
-          '## Stufe 1: Das Matrjoschka-Modell (Verschachtelte Abfragen) 📦',
+          '## Das Matrjoschka-Modell (Verschachtelte Abfragen) 📦',
           'Stellen Sie sich vor, Sie möchten den Preis jedes Produkts mit dem **teuersten Artikel des gesamten Ladens** vergleichen.',
           'Gedanklich geschieht dies in zwei Schritten:',
           '1. Sie ermitteln zunächst den Höchstpreis: „Was kostet der teuerste Artikel?“ (Ergebnis: 249 €).',
@@ -70,7 +70,7 @@ export const scalarSubquery: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: جایگاه‌های مجاز و خطای مرگبار زیرکوئری‌ها ⚠️',
+          '## جایگاه‌های مجاز و خطای مرگبار زیرکوئری‌ها ⚠️',
           '```sql',
           'SELECT name, price, (SELECT MAX(price) FROM products) AS max_price',
           'FROM products;',
@@ -81,7 +81,7 @@ export const scalarSubquery: Level = {
           '> ⚠️ **خطای مرگبار (Runtime Crash):** اگر زیرکوئری درون `SELECT` بیش از یک ردیف خروجی تولید کند (مثلاً `SELECT price FROM products` بدون MAX)، پایگاه داده بلافاصله با خطای `subquery returns more than 1 row` متوقف می‌شود!',
         ],
         en: [
-          '## Level 2: Syntax Rules & The Multi-Row Crash Trap ⚠️',
+          '## Syntax Rules & The Multi-Row Crash Trap ⚠️',
           '```sql',
           'SELECT name, price, (SELECT MAX(price) FROM products) AS max_price',
           'FROM products;',
@@ -92,7 +92,7 @@ export const scalarSubquery: Level = {
           '> ⚠️ **Fatal Runtime Pitfall:** If an expression in a scalar context produces *more than one row* (e.g. `SELECT price FROM products` without an aggregate), the engine crashes with: `subquery returns more than 1 row`!',
         ],
         de: [
-          '## Stufe 2: Syntaxregeln & Der Mehrzeilen-Absturz ⚠️',
+          '## Syntaxregeln & Der Mehrzeilen-Absturz ⚠️',
           '```sql',
           'SELECT name, price, (SELECT MAX(price) FROM products) AS max_price',
           'FROM products;',
@@ -157,7 +157,7 @@ export const inSubquery: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۱: کارآگاه‌بازی و حل مرحله‌به‌مرحله معما 🕵️',
+          '## کارآگاه‌بازی و حل مرحله‌به‌مرحله معما 🕵️',
           'فرض کنید می‌خواهید بدانید: «چه مشتریانی تا به حال کتاب خریده‌اند؟»',
           'در دنیای واقعی شما این کار را در ۳ قدم پی‌درپی حل می‌کنید:',
           '1. **قدم اول:** به قفسه کالاها می‌روید و شناسه کتاب‌ها را یادداشت می‌کنید: `SELECT id FROM products WHERE category = \'Books\'`.',
@@ -166,7 +166,7 @@ export const inSubquery: Level = {
           'عملگر `IN` به شما اجازه می‌دهد این زنجیره ۳ مرحله‌ای را درون یک کوئری واحد ترکیب کنید.',
         ],
         en: [
-          '## Level 1: The Detective Investigation Analogy 🕵️',
+          '## The Detective Investigation Analogy 🕵️',
           'Suppose your manager asks: "Which customer names have ever ordered a Book?"',
           'You investigate the normalized database in three deductive steps:',
           '1. **Step 1:** Look up product IDs for the Books category: `SELECT id FROM products WHERE category = \'Books\'`.',
@@ -175,7 +175,7 @@ export const inSubquery: Level = {
           'The `IN (SELECT ...)` predicate chains these deductive steps together into an expressive unified pipeline.',
         ],
         de: [
-          '## Stufe 1: Die Detektiv-Ermittlung 🕵️',
+          '## Die Detektiv-Ermittlung 🕵️',
           'Aufgabe: „Welche Kunden haben jemals ein Buch bestellt?“',
           'In einer relationalen Datenbank lösen Sie dies in drei Schritten:',
           '1. **Schritt 1:** Produkt-IDs der Kategorie `Books` ermitteln: `SELECT id FROM products WHERE category = \'Books\'`.',
@@ -189,7 +189,7 @@ export const inSubquery: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: زیرکوئری‌های مستقل و نحوه اجرای آن‌ها ⚙️',
+          '## زیرکوئری‌های مستقل و نحوه اجرای آن‌ها ⚙️',
           '```sql',
           'SELECT name FROM customers',
           'WHERE id IN (',
@@ -204,7 +204,7 @@ export const inSubquery: Level = {
           '- زیرکوئری درون `IN` باید دقیقاً **یک ستون** برگرداند تا با ستون بیرونی مقایسه شود.',
         ],
         en: [
-          '## Level 2: Uncorrelated Subquery Mechanics ⚙️',
+          '## Uncorrelated Subquery Mechanics ⚙️',
           '```sql',
           'SELECT name FROM customers',
           'WHERE id IN (',
@@ -219,7 +219,7 @@ export const inSubquery: Level = {
           '- Subqueries evaluated by `IN` must return strictly **one column** to match against the target column on the left.',
         ],
         de: [
-          '## Stufe 2: Unkorrelierte Ausführung ⚙️',
+          '## Unkorrelierte Ausführung ⚙️',
           '```sql',
           'SELECT name FROM customers',
           'WHERE id IN (',
@@ -289,21 +289,21 @@ export const existsSubquery: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۱: تفاوت تفکر IN با تفکر EXISTS ⚡',
+          '## تفاوت تفکر IN با تفکر EXISTS ⚡',
           'تصور کنید می‌خواهید بدانید آیا شخصی تا به حال سفارشی ثبت کرده است یا خیر:',
           '- در روش `IN`: موتور کل سفارش‌های تاریخ شرکت را جمع‌آوری کرده و یک لیست غول‌پیکر می‌سازد، سپس بررسی می‌کند مشتری در آن لیست هست یا نه.',
           '- در روش `EXISTS`: موتور سراغ پرونده مشتری می‌رود و به جدول سفارش‌ها نگاه می‌کند. **به محض اینکه حتی یک سفارش دید، کار را متوقف می‌کند و می‌گوید: «بله، وجود دارد!»**',
           'به این قابلیت توقف زودهنگام در علم کامپیوتر **Short-Circuit Evaluation** می‌گویند.',
         ],
         en: [
-          '## Level 1: The Short-Circuit Mindset (IN vs EXISTS) ⚡',
+          '## The Short-Circuit Mindset (IN vs EXISTS) ⚡',
           'Consider validating whether a customer has ever placed an order:',
           '- With `IN`: The database may assemble a massive list of every order placed in company history, then scans membership.',
           '- With `EXISTS`: The engine inspects the orders table for that specific customer and **stops scanning the millisecond it finds the very first matching record**.',
           'This immediate early exit is called **Short-Circuit Evaluation**, making `EXISTS` exceptionally performant on large tables.',
         ],
         de: [
-          '## Stufe 1: Das Short-Circuit Prinzip (IN vs EXISTS) ⚡',
+          '## Das Short-Circuit Prinzip (IN vs EXISTS) ⚡',
           'Aufgabe: Prüfen, ob ein Kunde mindestens eine Bestellung getätigt hat.',
           '- Mit `IN`: Die Datenbank erstellt potenziell eine riesige Liste aller Bestellungen und gleicht ab.',
           '- Mit `EXISTS`: Das System sucht für den Kunden in `orders` und **stoppt sofort beim allerersten Treffer**.',
@@ -315,7 +315,7 @@ export const existsSubquery: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: زیرکوئری وابسته و راز SELECT 1 🔑',
+          '## زیرکوئری وابسته و راز SELECT 1 🔑',
           '```sql',
           'SELECT name FROM customers c',
           'WHERE EXISTS (',
@@ -327,7 +327,7 @@ export const existsSubquery: Level = {
           '- عبارت `c.id` درون زیرکوئری به جدول بیرونی اشاره دارد که به آن **Correlated Subquery (زیرکوئری وابسته)** می‌گویند.',
         ],
         en: [
-          '## Level 2: Correlated Subqueries & The Secret of SELECT 1 🔑',
+          '## Correlated Subqueries & The Secret of SELECT 1 🔑',
           '```sql',
           'SELECT name FROM customers c',
           'WHERE EXISTS (',
@@ -339,7 +339,7 @@ export const existsSubquery: Level = {
           '- The subquery references `c.id` from the outer customer record; this coupling is known as a **Correlated Subquery**.',
         ],
         de: [
-          '## Stufe 2: Korrelierte Unterabfragen & Das Geheimnis von SELECT 1 🔑',
+          '## Korrelierte Unterabfragen & Das Geheimnis von SELECT 1 🔑',
           '```sql',
           'SELECT name FROM customers c',
           'WHERE EXISTS (',
@@ -403,19 +403,19 @@ export const derivedTable: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۱: ساخت جدول موقت پروازی (On-The-Fly) 🛫',
+          '## ساخت جدول موقت پروازی (On-The-Fly) 🛫',
           'همیشه مجبور نیستید داده‌ها را از جدول‌های واقعی دیسک بخوانید.',
           'در بند `FROM` می‌توانید یک کوئری کامل بنویسید؛ خروجی این کوئری مانند یک جدول موقت در حافظه رم ظاهر می‌شود که می‌توانید روی آن کوئری جدید بزنید، فیلتر کنید یا آن را مرتب سازید.',
           'به این جدول‌های موقت، **Derived Tables (جدول‌های مشتق‌شده)** می‌گویند.',
         ],
         en: [
-          '## Level 1: Ephemeral Tables On-The-Fly 🛫',
+          '## Ephemeral Tables On-The-Fly 🛫',
           'You are never limited to querying physical tables stored on disk.',
           'By placing a subquery directly inside the `FROM` clause, its result set materializes as an in-memory virtual table that you can query, join, and sort like any regular table.',
           'These in-memory query structures are called **Derived Tables** (or inline views).',
         ],
         de: [
-          '## Stufe 1: Temporäre Tabellen im Arbeitsspeicher 🛫',
+          '## Temporäre Tabellen im Arbeitsspeicher 🛫',
           'Sie müssen Abfragen nicht zwingend auf physischen Tabellen ausführen.',
           'Eine Unterabfrage in der `FROM`-Klausel erzeugt eine temporäre virtuelle Tabelle im Arbeitsspeicher, die wie jede normale Tabelle abgefragt werden kann.',
           'Man nennt solche Strukturen **abgeleitete Tabellen** (Derived Tables).',
@@ -426,7 +426,7 @@ export const derivedTable: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: قانون اجباری نام مستعار (Alias) 🏷️',
+          '## قانون اجباری نام مستعار (Alias) 🏷️',
           '```sql',
           'SELECT category, n',
           'FROM (',
@@ -437,7 +437,7 @@ export const derivedTable: Level = {
           '> ⚠️ **قانون خطای متداول:** استاندارد SQL حکم می‌کند که هر جدول مشتق‌شده **حتماً و بدون استثنا باید یک نام مستعار (مثل `t`)** داشته باشد. فراموش کردن حرف `t` بعد از پرانتز باعث خطای سینتکس خواهد شد!',
         ],
         en: [
-          '## Level 2: The Mandatory Table Alias Invariant 🏷️',
+          '## The Mandatory Table Alias Invariant 🏷️',
           '```sql',
           'SELECT category, n',
           'FROM (',
@@ -448,7 +448,7 @@ export const derivedTable: Level = {
           '> ⚠️ **Mandatory Syntax Rule:** ANSI SQL strictly dictates that every derived table **must have an explicit table alias** (like `t`). Omitting `t` after the closing parenthesis triggers an immediate syntax error across all engines!',
         ],
         de: [
-          '## Stufe 2: Die Pflicht zum Tabellen-Alias 🏷️',
+          '## Die Pflicht zum Tabellen-Alias 🏷️',
           '```sql',
           'SELECT category, n',
           'FROM (',
@@ -511,21 +511,21 @@ export const cteBasic: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۱: نجات از جهنم پرانتزهای تودرتو 📖',
+          '## نجات از جهنم پرانتزهای تودرتو 📖',
           'وقتی زیرکوئری‌ها زیاد می‌شوند، کدهای SQL شبیه کلافی سردرگم می‌شوند که خواندن آن‌ها از داخل به خارج بسیار دشوار است.',
           'عبارت **CTE (Common Table Expression)** که با دستور `WITH` شروع می‌شود، به شما اجازه می‌دهد پایپ‌لاین‌های تحلیلی را دقیقاً مانند خواندن یک کتاب داستان **از بالا به پایین** بنویسید:',
           '1. ابتدا می‌گویید: «فرض کن جدولی موقت به نام `expensive` داریم...»',
           '2. سپس در خط بعدی از آن جدول تمیز و شفاف استفاده می‌کنید.',
         ],
         en: [
-          '## Level 1: Escaping Nested Subquery Hell 📖',
+          '## Escaping Nested Subquery Hell 📖',
           'Deeply nested derived tables quickly become unreadable spaghetti code forced to be deciphered inside-out.',
           'A **CTE (Common Table Expression)** defined via the `WITH` keyword transforms queries into top-to-bottom procedural pipelines:',
           '1. You declare named modular steps at the top of your script.',
           '2. Subsequent blocks reference those named steps cleanly.',
         ],
         de: [
-          '## Stufe 1: Befreiung von verschachteltem Code-Spaghetti 📖',
+          '## Befreiung von verschachteltem Code-Spaghetti 📖',
           'Tief verschachtelte Unterabfragen sind schwer lesbar und fehleranfällig.',
           'Ein **CTE (Common Table Expression)** mit `WITH` ermöglicht eine saubere Strukturierung von oben nach unten wie ein Rezept:',
           '1. Oben definieren Sie Zwischenschritte unter klaren Namen.',
@@ -537,7 +537,7 @@ export const cteBasic: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: ساختار استاندارد CTE 🏗️',
+          '## ساختار استاندارد CTE 🏗️',
           '```sql',
           'WITH expensive AS (',
           '  SELECT id, name, price FROM products WHERE price > 50',
@@ -551,7 +551,7 @@ export const cteBasic: Level = {
           '- امکان اتصال (JOIN) چندین CTE به یکدیگر در انتهای کوئری.',
         ],
         en: [
-          '## Level 2: Architectural Syntax & Composability 🏗️',
+          '## Architectural Syntax & Composability 🏗️',
           '```sql',
           'WITH expensive AS (',
           '  SELECT id, name, price FROM products WHERE price > 50',
@@ -565,7 +565,7 @@ export const cteBasic: Level = {
           '- Reusable: A single CTE can be joined multiple times in the final statement without duplicating query logic.',
         ],
         de: [
-          '## Stufe 2: Architektur & Wiederverwendbarkeit 🏗️',
+          '## Architektur & Wiederverwendbarkeit 🏗️',
           '```sql',
           'WITH expensive AS (',
           '  SELECT id, name, price FROM products WHERE price > 50',
@@ -635,17 +635,17 @@ export const recursiveCte: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۱: حل معمای چارت سازمانی و شجره‌نامه‌ها 🌳',
+          '## حل معمای چارت سازمانی و شجره‌نامه‌ها 🌳',
           'چگونه می‌توان تمام زیردستان یک مدیرعامل، یا تمام اجداد یک شخص را پیدا کرد وقتی عمق درخت نامعلوم است؟',
           'با جوین‌های عادی، برای هر لایه باید یک `JOIN` دستی بنویسید؛ اما با **Recursive CTE (عبارت بازگشتی)**، پایگاه‌داده خودش حلقه می‌زند و از ریشه تا عمیق‌ترین برگ درخت جلو می‌رود!',
         ],
         en: [
-          '## Level 1: Tree Traversals & Organizational Charts 🌳',
+          '## Tree Traversals & Organizational Charts 🌳',
           'How do you query all reporting lines in a company hierarchy when tree depth is arbitrarily deep?',
           'Normal joins require hardcoding one explicit JOIN per level of depth. A **Recursive CTE** automates recursion natively, crawling from root nodes down to leaves dynamically.',
         ],
         de: [
-          '## Stufe 1: Baumstrukturen & Organigramme 🌳',
+          '## Baumstrukturen & Organigramme 🌳',
           'Wie ermittelt man alle Untergebenen in einer Unternehmenshierarchie mit unbekannter Tiefe?',
           'Standard-Joins erfordern für jede Hierarchiestufe einen separaten Join. Ein **rekursives CTE** durchläuft Bäume automatisch von der Wurzel bis zu den Blättern.',
         ],
@@ -655,21 +655,21 @@ export const recursiveCte: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: معماری دو مرحله‌ای WITH RECURSIVE ⚙️',
+          '## معماری دو مرحله‌ای WITH RECURSIVE ⚙️',
           'هر بازگشتی شامل دو قسمت متصل به هم با `UNION ALL` است:',
           '1. **عضو پایه (Anchor Member):** ریشه درخت را معین می‌کند (مدیرعاملی که `manager_id IS NULL` است با عمق ۰).',
           '2. **عضو بازگشتی (Recursive Member):** در هر دور، کارمندان را به نتایج مرحله قبلی متصل کرده و عمق را یکی اضافه می‌کند (`r.depth + 1`).',
           'حلقه زمانی تمام می‌شود که هیچ ردیف جدیدی پیدا نشود.',
         ],
         en: [
-          '## Level 2: The Two-Phase Recursive Architecture ⚙️',
+          '## The Two-Phase Recursive Architecture ⚙️',
           'Every recursive CTE pairs two unified halves via `UNION ALL`:',
           '1. **Anchor Query:** Establishes the seed/root nodes (CEO where `manager_id IS NULL` at depth 0).',
           '2. **Recursive Member:** Joins the underlying table back to the previous iteration step, incrementing `r.depth + 1`.',
           'Recursion terminates cleanly when an iteration produces zero new rows.',
         ],
         de: [
-          '## Stufe 2: Aufbau eines rekursiven CTEs ⚙️',
+          '## Aufbau eines rekursiven CTEs ⚙️',
           'Ein rekursives CTE besteht aus zwei Teilen, verbunden durch `UNION ALL`:',
           '1. **Anker-Abfrage (Anchor):** Definiert die Wurzel (`manager_id IS NULL` mit Tiefe 0).',
           '2. **Rekursiver Schritt:** Verknüpft untergeordnete Zeilen mit dem vorherigen Durchlauf und erhöht `r.depth + 1`.',

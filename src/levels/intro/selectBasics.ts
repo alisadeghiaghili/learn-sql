@@ -1,6 +1,6 @@
 /**
  * Intro sequence — SELECT fundamentals.
- * Refined with ELI pedagogical scaffolding, visual mental models,
+ * Natural, engaging pedagogy with visual mental models,
  * common pitfalls, and fluent trilingual support (fa, en, de).
  */
 
@@ -40,15 +40,15 @@ export const selectAll: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۱: توضیح ساده (Explain Like I\'m 5) 🧒',
+          '## مدل ذهنی: پایگاه‌داده و تفکر در زبان SQL 📚',
           'تصور کنید پایگاه‌داده مثل یک **کتابخانه بزرگ** با قفسه‌های برچسب‌خورده است. هر قفسه یک **جدول (Table)** نام دارد (مثلاً قفسه مشتریان به نام `customers`).',
           'در هر قفسه، پرونده‌های افراد در ردیف‌ها چیده شده و هر پرونده شامل برگه‌های مشخصی مثل نام، شهر و سال عضویت است.',
           '### زبان SQL چگونه کار می‌کند؟',
           'برخلاف زبان‌های برنامه‌نویسی معمولی مثل پایتون یا جاوااسکریپت که باید مرحله‌به‌مرحله به کامپیوتر بگویید «چگونه» بگردد، SQL یک زبان **توصیفی (Declarative)** است:',
-          '> شما فقط به کتابدار می‌گویید **«چه می‌خواهید»**، و موتور پایگاه‌داده خودش سریع‌ترین راه را پیدا می‌کند!',
+          '> شما فقط به سیستم می‌گویید **«چه داده‌ای می‌خواهید»**، و موتور پایگاه‌داده خودش بهینه‌ترین راه را برای واکشی آن پیدا می‌کند!',
         ],
         en: [
-          '## Level 1: Intuition & The Mental Model 🧒',
+          '## Intuition & The Mental Model 📚',
           'Think of a database as an **organized filing library**. Each distinct section is a **Table** (such as our customer registry `customers`).',
           'Inside each table, rows represent individual records, and columns represent specific attributes (id, name, city, year).',
           '### The Declarative Nature of SQL',
@@ -56,7 +56,7 @@ export const selectAll: Level = {
           '> You simply declare **what result you want**, and the database engine\'s query optimizer calculates the fastest access path.',
         ],
         de: [
-          '## Stufe 1: Intuition & Mentales Modell 🧒',
+          '## Intuition & Mentales Modell 📚',
           'Stellen Sie sich eine Datenbank wie eine **gut sortierte Bibliothek** vor. Jeder Bereich ist eine **Tabelle** (z. B. unsere Kundentabelle `customers`).',
           'Zeilen stellen einzelne Personen/Einträge dar, Spalten die Eigenschaften (ID, Name, Stadt, Jahr).',
           '### Die deklarative Natur von SQL',
@@ -69,7 +69,7 @@ export const selectAll: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: کالبدشکافی دستور و دام‌های عملکردی ⚙️',
+          '## کالبدشکافی دستور و دام‌های عملکردی ⚙️',
           '```sql',
           'SELECT * FROM customers;',
           '```',
@@ -80,7 +80,7 @@ export const selectAll: Level = {
           '> ⚠️ **دام عملکردی در دنیای واقعی:** علامت `*` برای محیط‌های یادگیری عالی است، اما در سیستم‌های بزرگ صنعتی با میلیون‌ها رکورد هرگز نباید بی‌دلیل از `SELECT *` استفاده کرد، زیرا ترافیک سنگین شبکه و مصرف رم غیرضروری ایجاد می‌کند.',
         ],
         en: [
-          '## Level 2: Syntax Anatomy & Real-World Caveats ⚙️',
+          '## Syntax Anatomy & Real-World Caveats ⚙️',
           '```sql',
           'SELECT * FROM customers;',
           '```',
@@ -91,7 +91,7 @@ export const selectAll: Level = {
           '> ⚠️ **Production Pitfall:** `SELECT *` is convenient for learning and exploratory consoles. In production systems with wide tables or millions of rows, it causes severe I/O bottlenecks and prevents index-only execution paths.',
         ],
         de: [
-          '## Stufe 2: Syntax-Aufbau & Praxis-Fallstricke ⚙️',
+          '## Syntax-Aufbau & Praxis-Fallstricke ⚙️',
           '```sql',
           'SELECT * FROM customers;',
           '```',
@@ -157,19 +157,19 @@ export const selectColumns: Level = {
       diagram: 'select-projection',
       markdowns: {
         fa: [
-          '## سطح ۱: برش عمودی داده‌ها (Projection) ✂️',
+          '## برش عمودی داده‌ها (Projection) ✂️',
           'تصور کنید به جای ورق زدن کل پرونده افراد، فقط می‌خواهید یک فهرست تماس شامل **نام** و **شهر** تهیه کنید.',
           'در ریاضیات و پایگاه‌داده، به عمل انتخاب ستون‌های خاص و دور انداختن ستون‌های اضافه، **Projection (تصویربرداری عمودی)** می‌گویند.',
           'به دیاگرام بالا نگاه کنید: ستون‌های `id` و `signup_year` فیلتر شده و تنها ستون‌های `name` و `city` به خروجی منتقل شده‌اند.',
         ],
         en: [
-          '## Level 1: Vertical Slicing (Projection) ✂️',
+          '## Vertical Slicing (Projection) ✂️',
           'Imagine preparing a quick directory list: you only need each customer\'s **name** and **city**, ignoring administrative IDs and signup years.',
           'In relational algebra, filtering specific columns vertically while discarding unneeded attributes is called **Projection**.',
           'Look at the schematic above: columns `id` and `signup_year` are dropped, streaming only `name` and `city` to the client.',
         ],
         de: [
-          '## Stufe 1: Vertikales Zuschneiden (Projektion) ✂️',
+          '## Vertikales Zuschneiden (Projektion) ✂️',
           'Wenn Sie lediglich ein Verzeichnis mit **Name** und **Stadt** benötigen, müssen Sie nicht die gesamte Akte laden.',
           'In der relationalen Algebra bezeichnet man das gezielte Auswählen von Spalten als **Projektion**.',
           'Im obigen Schaubild sehen Sie: `id` und `signup_year` werden verworfen, nur `name` und `city` gelangen in das Ergebnis.',
@@ -180,7 +180,7 @@ export const selectColumns: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: قواعد نگارش و ترتیب ستون‌ها 📋',
+          '## قواعد نگارش و ترتیب ستون‌ها 📋',
           'کافی است نام ستون‌های مورد نظر را با کاما انگلیسی `,` از یکدیگر جدا کنید:',
           '```sql',
           'SELECT name, city FROM customers;',
@@ -190,7 +190,7 @@ export const selectColumns: Level = {
           '- انتخاب صریح ستون‌ها باعث می‌شود موتور پایگاه داده بتواند از ایندکس‌های حافظه رم استفاده کند و مجبور به خواندن داده‌های سنگین از دیسک نشود.',
         ],
         en: [
-          '## Level 2: Syntax Conventions & Column Ordering 📋',
+          '## Syntax Conventions & Column Ordering 📋',
           'Separate desired attributes with standard commas `,`:',
           '```sql',
           'SELECT name, city FROM customers;',
@@ -200,7 +200,7 @@ export const selectColumns: Level = {
           '- Selecting only the necessary columns allows storage engines to utilize covering indexes and minimize memory bandwidth consumption.',
         ],
         de: [
-          '## Stufe 2: Syntaxregeln & Spaltenreihenfolge 📋',
+          '## Syntaxregeln & Spaltenreihenfolge 📋',
           'Trennen Sie die gewünschten Spaltennamen einfach durch Kommas `,`:',
           '```sql',
           'SELECT name, city FROM customers;',
@@ -259,7 +259,7 @@ export const whereBasic: Level = {
       diagram: 'where-filter',
       markdowns: {
         fa: [
-          '## سطح ۱: فیلتر کردن افقی داده‌ها (Selection) 🔍',
+          '## فیلتر کردن افقی داده‌ها (Selection) 🔍',
           'اگر ستون‌ها «برش عمودی» بودند، بند `WHERE` یک **«الک افقی»** است!',
           'موتور پایگاه‌داده ردیف به ردیف جلو می‌رود و از هر ردیف می‌پرسد: «آیا شرط من درباره تو درست است؟»',
           '- اگر پاسخ `TRUE` باشد: ردیف حفظ می‌شود.',
@@ -267,7 +267,7 @@ export const whereBasic: Level = {
           'در دیاگرام بالا، تنها ردیف مربوط به Ada در شهر London شرط را برآورده کرده و عبور می‌کند.',
         ],
         en: [
-          '## Level 1: Horizontal Slicing & Predicates 🔍',
+          '## Horizontal Slicing & Predicates 🔍',
           'While column projection is a vertical slice, the `WHERE` clause is a **horizontal sieve**.',
           'The engine evaluates rows against your Boolean condition:',
           '- If the predicate evaluates to `TRUE`: the row is kept.',
@@ -275,7 +275,7 @@ export const whereBasic: Level = {
           'In the schematic above, only Ada in London satisfies the test and reaches the result.',
         ],
         de: [
-          '## Stufe 1: Horizontales Sieben von Daten 🔍',
+          '## Horizontales Sieben von Daten 🔍',
           'Während die Spaltenauswahl ein vertikaler Schnitt ist, fungiert die `WHERE`-Klausel als **horizontales Filtersieb**.',
           'Jede Zeile wird anhand des Prädikats geprüft:',
           '- Ist die Bedingung `TRUE`: Zeile wird beibehalten.',
@@ -288,7 +288,7 @@ export const whereBasic: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: قوانین کوتیشن و عملگرهای مقایسه 💡',
+          '## قوانین کوتیشن و عملگرهای مقایسه 💡',
           '```sql',
           "SELECT name FROM customers WHERE city = 'London';",
           '```',
@@ -298,7 +298,7 @@ export const whereBasic: Level = {
           '- **عملگرهای مقایسه‌ای:** `=`, `!=` (یا `<>`), `>`, `<`, `>=`, `<=`.',
         ],
         en: [
-          '## Level 2: Syntax Precision & Common Pitfalls 💡',
+          '## Syntax Precision & Common Pitfalls 💡',
           '```sql',
           "SELECT name FROM customers WHERE city = 'London';",
           '```',
@@ -308,7 +308,7 @@ export const whereBasic: Level = {
           '- **Comparison Operators:** `=`, `!=` (or `<>`), `>`, `<`, `>=`, `<=`.',
         ],
         de: [
-          '## Stufe 2: Syntax-Details & typische Stolpersteine 💡',
+          '## Syntax-Details & typische Stolpersteine 💡',
           '```sql',
           "SELECT name FROM customers WHERE city = 'London';",
           '```',
@@ -371,7 +371,7 @@ export const orderLimit: Level = {
       diagram: 'order-limit',
       markdowns: {
         fa: [
-          '## سطح ۱: چرا پایگاه داده ترتیب ذاتی ندارد؟ 🎲',
+          '## چرا پایگاه داده ترتیب ذاتی ندارد؟ 🎲',
           'در تئوری مجموعه‌ها و پایگاه‌های داده رابطه‌ای، جدول‌ها مثل یک **کیسه مهره** هستند؛ هیچ ترتیب اول یا آخری به صورت پیش‌فرض وجود ندارد!',
           'اگر بدون `ORDER BY` کوئری بزنید، پایگاه داده حق دارد ردیف‌ها را با هر ترتیبی که مایل است بازگرداند.',
           '### مدل ذهنی ترکیب ORDER BY و LIMIT:',
@@ -379,7 +379,7 @@ export const orderLimit: Level = {
           '2. سپس دستور `LIMIT n` مثل یک گیوتین عمل کرده و فقط `n` تای اول را نگه می‌دارد.',
         ],
         en: [
-          '## Level 1: Why Tables Have No Inherent Order 🎲',
+          '## Why Tables Have No Inherent Order 🎲',
           'In relational set theory, a table is an **unordered bag of records**. Unless explicitly ordered, record order is non-deterministic.',
           'Running queries without `ORDER BY` means results could arrive in arbitrary sequence depending on storage internals.',
           '### The Mental Model of ORDER BY + LIMIT:',
@@ -387,7 +387,7 @@ export const orderLimit: Level = {
           '2. `LIMIT n` slices exactly the top `n` elements from the head of the sorted stream.',
         ],
         de: [
-          '## Stufe 1: Warum Tabellen keine feste Reihenfolge haben 🎲',
+          '## Warum Tabellen keine feste Reihenfolge haben 🎲',
           'In der relationalen Mengentheorie ist eine Tabelle eine **ungeordnete Menge**. Ohne Sortieranweisung ist die Zeilenfolge zufällig.',
           'Erst `ORDER BY` stellt eine verlässliche Reihenfolge sicher.',
           '### Das Zusammenspiel von ORDER BY und LIMIT:',
@@ -400,7 +400,7 @@ export const orderLimit: Level = {
       type: 'modal',
       markdowns: {
         fa: [
-          '## سطح ۲: کلیدواژه‌های ASC و DESC 📊',
+          '## کلیدواژه‌های ASC و DESC 📊',
           '```sql',
           'SELECT name, price FROM products',
           'ORDER BY price DESC',
@@ -411,7 +411,7 @@ export const orderLimit: Level = {
           '> ⚡ **الگوی Top-N در دنیای واقعی:** پیدا کردن «گران‌ترین کالاها»، «پرفروش‌ترین ماه‌ها» یا «پرافتخارترین بازیکنان» همیشه با ترکیب `ORDER BY col DESC LIMIT n` انجام می‌شود.',
         ],
         en: [
-          '## Level 2: Directional Sorting & Top-N Patterns 📊',
+          '## Directional Sorting & Top-N Patterns 📊',
           '```sql',
           'SELECT name, price FROM products',
           'ORDER BY price DESC',
@@ -422,7 +422,7 @@ export const orderLimit: Level = {
           '> ⚡ **The Ubiquitous Top-N Pattern:** Finding "highest priced items", "top sales performers", or "latest events" is universally implemented using `ORDER BY col DESC LIMIT n`.',
         ],
         de: [
-          '## Stufe 2: Sortierrichtung & Top-N Muster 📊',
+          '## Sortierrichtung & Top-N Muster 📊',
           '```sql',
           'SELECT name, price FROM products',
           'ORDER BY price DESC',
