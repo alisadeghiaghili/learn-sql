@@ -31,7 +31,7 @@ import {
   GITHUB_URL,
 } from './components/WelcomeDialog';
 import { LevelCompleteModal } from './components/LevelCompleteModal';
-import { buildCandidates, completeToken } from './autocomplete';
+import { SqlEditor } from './components/SqlEditor';
 
 type Mode =
   | { kind: 'sandbox' }
@@ -124,8 +124,6 @@ export function App() {
   const undoStack = useRef<Snapshot[]>([]);
   const modeRef = useRef(mode);
   modeRef.current = mode;
-  const editorRef = useRef<HTMLTextAreaElement | null>(null);
-  const pendingCursor = useRef<number | null>(null);
 
   const refreshSchema = useCallback((database: LearnSqlDb) => {
     try {
@@ -169,20 +167,6 @@ export function App() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // After a Tab completion rewrites `editor`, the browser resets the caret to
-  // the end of the textarea. Restore it to the recorded position, but only
-  // after React has committed the new value (hence the [editor] dep).
-  useEffect(() => {
-    if (pendingCursor.current != null) {
-      const el = editorRef.current;
-      if (el) {
-        el.focus();
-        el.setSelectionRange(pendingCursor.current, pendingCursor.current);
-      }
-      pendingCursor.current = null;
-    }
-  }, [editor]);
 
   const enterLevel = useCallback(
     async (level: Level, withIntro: boolean) => {
@@ -310,8 +294,18 @@ export function App() {
           return;
         case 'hint': {
           const m = modeRef.current;
-          if (m.kind === 'level' && m.level.startDialog) {
-            setMode({ ...m, intro: true });
+          if (m.kind === 'level') {
+            const hintText = localize(m.level.hint, locale);
+            if (hintText) {
+              const commentLines = hintText
+                .split('\n')
+                .map((line) => `-- 💡 نکته: ${line}`)
+                .join('\n');
+              setEditor((prev) => {
+                if (prev.includes(commentLines)) return prev;
+                return `${commentLines}\n\n${prev}`;
+              });
+            }
           }
           return;
         }
@@ -589,27 +583,12 @@ export function App() {
                 Ctrl/Cmd+Enter runs · Tab completes
               </span>
             </div>
-            <textarea
-              className="sql-editor"
-              ref={editorRef}
+            <SqlEditor
               value={editor}
-              onChange={(e) => setEditor(e.target.value)}
-              onKeyDown={(e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                  e.preventDefault();
-                  runEditor();
-                } else if (e.key === 'Tab') {
-                  e.preventDefault();
-                  const start = e.currentTarget.selectionStart ?? editor.length;
-                  const res = completeToken(editor, start, buildCandidates(tables));
-                  if (res) {
-                    setEditor(res.value);
-                    pendingCursor.current = res.cursor;
-                  }
-                }
-              }}
-              spellCheck={false}
-              aria-label="SQL editor"
+              onChange={setEditor}
+              onRun={runEditor}
+              tables={tables}
+              placeholder={t('editorPlaceholder', locale)}
             />
           </div>
           <ResultGrid

@@ -586,24 +586,229 @@ button:disabled {
   margin-left: auto;
 }
 
-.sql-editor {
+/* ——— SQL Editor Container with Syntax Overlay & SSMS IntelliSense ——— */
+
+.sql-editor-container {
+  position: relative;
   flex: 1;
   min-height: 0;
   width: 100%;
-  resize: none;
-  border: 0;
   background: var(--base);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.55;
-  padding: 12px 14px;
-  tab-size: 2;
+  overflow: hidden;
 }
 
-.sql-editor:focus {
+.sql-editor-textarea,
+.sql-highlight-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  padding: 12px 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 20px;
+  tab-size: 2;
+  border: 0;
+  margin: 0;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow: auto;
+}
+
+.sql-highlight-overlay {
+  pointer-events: none;
+  background: transparent;
+  color: var(--ink);
+  z-index: 1;
+}
+
+.sql-editor-textarea {
+  z-index: 2;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--accent);
+  resize: none;
   outline: none;
-  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.sql-editor-textarea::selection {
+  background: rgba(46, 196, 182, 0.28);
+  color: transparent;
+}
+
+.sql-editor-textarea:focus {
+  outline: none;
+}
+
+/* Syntax Token Colors (SSMS / Modern Dark Theme) */
+.sql-tok-keyword {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.sql-tok-function {
+  color: #c084fc;
+  font-weight: 600;
+}
+
+.sql-tok-table {
+  color: #34d399;
+}
+
+.sql-tok-column {
+  color: #f6ad55;
+}
+
+.sql-tok-string {
+  color: #e2e8f0;
+  background: rgba(226, 232, 240, 0.08);
+  border-radius: 2px;
+}
+
+.sql-tok-number {
+  color: #f472b6;
+}
+
+.sql-tok-comment {
+  color: #64748b;
+  font-style: italic;
+}
+
+.sql-tok-operator {
+  color: #94a3b8;
+}
+
+.sql-tok-punctuation {
+  color: #94a3b8;
+}
+
+.sql-tok-identifier {
+  color: var(--ink);
+}
+
+/* ——— SSMS IntelliSense Popup ——— */
+.ssms-popup {
+  position: absolute;
+  z-index: 50;
+  width: 260px;
+  max-height: 220px;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--sans);
+  animation: fadeInFast 0.1s ease-out;
+}
+
+@keyframes fadeInFast {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ssms-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  background: #1f2937;
+  border-bottom: 1px solid #374151;
+  font-size: 10.5px;
+  color: #9ca3af;
+  font-family: var(--mono);
+}
+
+.ssms-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 180px;
+  padding: 2px;
+}
+
+.ssms-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #e5e7eb;
+}
+
+.ssms-item:hover,
+.ssms-item.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.ssms-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: bold;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ssms-icon.table {
+  background: rgba(52, 211, 153, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.4);
+}
+
+.ssms-icon.column {
+  background: rgba(246, 173, 85, 0.2);
+  color: #f6ad55;
+  border: 1px solid rgba(246, 173, 85, 0.4);
+}
+
+.ssms-icon.function {
+  background: rgba(192, 132, 252, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(192, 132, 252, 0.4);
+}
+
+.ssms-icon.keyword {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.ssms-item.active .ssms-icon {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.ssms-label {
+  font-family: var(--mono);
+  font-weight: 500;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ssms-detail {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-left: auto;
+  font-family: var(--mono);
+}
+
+.ssms-item.active .ssms-detail {
+  color: #dbeafe;
 }
 
 .result-wrap {
