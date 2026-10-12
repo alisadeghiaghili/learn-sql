@@ -32,6 +32,7 @@ import {
 } from './components/WelcomeDialog';
 import { LevelCompleteModal } from './components/LevelCompleteModal';
 import { SqlEditor } from './components/SqlEditor';
+import { launchConfetti, playFanfare } from './confetti';
 
 type Mode =
   | { kind: 'sandbox' }
@@ -271,6 +272,8 @@ export function App() {
             });
             const nextLevel = getNextLevel(id);
             setComplete({ level: m.level, next: nextLevel ?? null });
+            launchConfetti(4500);
+            playFanfare();
           }
         }
       } catch (err) {
@@ -653,8 +656,10 @@ export function App() {
 
       <LevelCompleteModal
         open={complete !== null}
-        levelName={complete ? localize(complete.level.name, locale) : ''}
-        nextName={complete?.next ? localize(complete.next.name, locale) : null}
+        level={complete?.level ?? null}
+        next={complete?.next ?? null}
+        commandsUsed={complete ? (golf[complete.level.id] ?? statementsIssued) : 0}
+        solvedCount={solvedIds.size}
         locale={locale}
         onNext={() => {
           const nxt = complete?.next;

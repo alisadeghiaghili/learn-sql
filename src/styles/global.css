@@ -336,15 +336,15 @@ button:disabled {
 }
 
 .tb-link.support {
-  border-color: rgba(244, 162, 97, 0.45);
-  color: #f4a261;
-  background: rgba(244, 162, 97, 0.1);
+  border-color: color-mix(in srgb, var(--goal) 55%, var(--border));
+  color: #ffe6b0;
+  background: color-mix(in srgb, var(--goal) 14%, var(--panel));
   font-weight: 500;
 }
 
 .tb-link.support:hover {
-  background: rgba(244, 162, 97, 0.2);
-  border-color: #f4a261;
+  background: color-mix(in srgb, var(--goal) 24%, var(--panel));
+  border-color: var(--goal);
 }
 
 @media (max-width: 1080px) {
@@ -539,15 +539,17 @@ button:disabled {
 }
 
 .pipe-stage.active {
-  color: var(--base);
+  color: #0b0f14;
   background: var(--accent);
   border-color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .pipe-stage.matched {
-  color: var(--goal);
+  color: #0b0f14;
+  background: var(--goal);
   border-color: var(--goal);
+  font-weight: 700;
 }
 
 .pipe-arrow {
@@ -1595,5 +1597,262 @@ button:disabled {
 .lesson-list li {
   margin-bottom: 5px;
   line-height: 1.5;
+}
+
+/* ——— Celebration Modal & Confetti (Matching Learn-DVC) ——— */
+
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.overlay-celebrate {
+  background: rgba(6, 10, 14, 0.84);
+  backdrop-filter: blur(3px);
+}
+
+.modal-celebrate {
+  width: min(500px, 92vw);
+  text-align: center;
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent),
+    0 24px 80px rgba(46, 196, 182, 0.16),
+    0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: celebrate-pop 420ms cubic-bezier(0.2, 0.9, 0.25, 1.2);
+  padding: 20px;
+}
+
+.celebrate {
+  text-align: center;
+  padding: 4px 2px 2px;
+}
+
+.celebrate-visual {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 10px;
+  display: grid;
+  place-items: center;
+}
+
+.celebrate-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 25%, transparent), transparent 70%);
+  animation: ring-pulse 1.8s ease-out infinite;
+}
+
+.celebrate-star {
+  position: relative;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--goal);
+  text-shadow: 0 0 18px color-mix(in srgb, var(--goal) 65%, transparent);
+  animation: star-bounce 700ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+.celebrate-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #062016;
+  background: linear-gradient(135deg, var(--accent), var(--goal));
+  border-radius: 999px;
+  padding: 5px 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 10px rgba(46, 196, 182, 0.3);
+}
+
+.celebrate-title {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.celebrate-sub {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.celebrate-sub code {
+  color: var(--accent);
+  background: var(--raised);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.celebrate-cheer {
+  margin: 0 0 14px;
+  color: var(--ink);
+  font-size: 14.5px;
+}
+
+.celebrate-stats {
+  margin: 0 auto 12px;
+  max-width: 420px;
+  border: 1px solid var(--border);
+  background: var(--raised);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 12.5px;
+  color: var(--goal);
+}
+
+.celebrate-progress {
+  margin: 0 auto 14px;
+  max-width: 320px;
+}
+
+.prog-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--goal));
+  border-radius: inherit;
+  transition: width 0.6s ease;
+}
+
+.share-block {
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  background: color-mix(in srgb, var(--accent) 8%, var(--panel));
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.share-title-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.share-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.share-btn {
+  min-height: 34px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: all 0.15s ease;
+}
+
+.share-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.share-btn.linkedin {
+  background: #0a66c2;
+  border-color: #0a66c2;
+  color: #fff;
+}
+
+.share-btn.x {
+  background: #111;
+  border-color: #333;
+  color: #fff;
+}
+
+.share-btn.facebook {
+  background: #1877f2;
+  border-color: #1877f2;
+  color: #fff;
+}
+
+.share-btn.copy {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+.share-status {
+  margin-top: 8px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.celebrate-next {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-top: 4px;
+}
+
+.celebrate-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+}
+
+@keyframes celebrate-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ring-pulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1.18);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+}
+
+@keyframes star-bounce {
+  0% {
+    transform: scale(0.3) rotate(-20deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(6deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
 }
 
