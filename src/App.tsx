@@ -82,7 +82,14 @@ export function App() {
   const [cellMatches, setCellMatches] = useState<boolean[][] | undefined>();
   const [win, setWin] = useState<WinCheck | null>(null);
   const [solved, setSolved] = useState(false);
-  const [editor, setEditor] = useState('-- Write SQL here, or click Lesson for guidance\nSELECT * FROM customers;\n');
+  const [locale, setLocale] = useState<Locale>(() => {
+    try {
+      const saved = localStorage.getItem('learnsql.lang') as Locale;
+      if (saved === 'fa' || saved === 'en' || saved === 'de') return saved;
+    } catch {}
+    return 'fa';
+  });
+  const [editor, setEditor] = useState(() => `${t('editorPlaceholder', locale)}SELECT * FROM customers;\n`);
   const [showGoal, setShowGoal] = useState(true);
   const [showLevels, setShowLevels] = useState(false);
   const [complete, setComplete] = useState<{ level: Level; next: Level | null } | null>(null);
@@ -91,19 +98,59 @@ export function App() {
   const [pipeActive, setPipeActive] = useState<Set<PipeStage>>(new Set());
   const [pipeHighlight, setPipeHighlight] = useState<number | null>(null);
   const [statementsIssued, setStatementsIssued] = useState(0);
-  const [locale, setLocale] = useState<Locale>(() => {
-    try {
-      const saved = localStorage.getItem('learnsql.lang') as Locale;
-      if (saved === 'fa' || saved === 'en' || saved === 'de') return saved;
-    } catch {}
-    return 'fa';
-  });
 
   const changeLocale = useCallback((newLoc: Locale) => {
     setLocale(newLoc);
     try {
       localStorage.setItem('learnsql.lang', newLoc);
     } catch {}
+
+    setEditor((prev) => {
+      let updated = prev;
+      // 1. Translate editor placeholder comment if present
+      for (const loc of ['fa', 'en', 'de'] as Locale[]) {
+        const ph = t('editorPlaceholder', loc);
+        if (updated.includes(ph)) {
+          updated = updated.replace(ph, t('editorPlaceholder', newLoc));
+        }
+      }
+
+      // 2. Translate hint comments if active level
+      const currentMode = modeRef.current;
+      if (currentMode.kind === 'level') {
+        const currentLevel = currentMode.level;
+        // Translate hint block
+        for (const loc of ['fa', 'en', 'de'] as Locale[]) {
+          const oldHint = localize(currentLevel.hint, loc);
+          const oldPrefix = t('commentHintPrefix', loc);
+          if (oldHint) {
+            const oldLines = oldHint
+              .split('\n')
+              .map((line) => `-- ${oldPrefix} ${line}`)
+              .join('\n');
+            if (updated.includes(oldLines)) {
+              const newHint = localize(currentLevel.hint, newLoc);
+              const newPrefix = t('commentHintPrefix', newLoc);
+              const newLines = newHint
+                .split('\n')
+                .map((line) => `-- ${newPrefix} ${line}`)
+                .join('\n');
+              updated = updated.replace(oldLines, newLines);
+            }
+          }
+        }
+
+        // Translate level header comment
+        for (const loc of ['fa', 'en', 'de'] as Locale[]) {
+          const oldHeader = `-- ${localize(currentLevel.name, loc)}\n`;
+          if (updated.startsWith(oldHeader)) {
+            const newHeader = `-- ${localize(currentLevel.name, newLoc)}\n`;
+            updated = newHeader + updated.slice(oldHeader.length);
+          }
+        }
+      }
+      return updated;
+    });
   }, []);
 
   useEffect(() => {
@@ -177,16 +224,16 @@ export function App() {
       setShowGoal(true);
       setPipeActive(new Set());
       setPipeHighlight(null);
-      setEditor('-- ' + localize(level.name) + '\n');
+      setEditor('-- ' + localize(level.name, locale) + '\n');
     },
-    [applySeed],
+    [applySeed, locale],
   );
 
   const enterSandbox = useCallback(async () => {
     await applySeed(shopSchema, shopSeed);
     setMode({ kind: 'sandbox' });
-    setEditor('SELECT * FROM customers;\n');
-  }, [applySeed]);
+    setEditor(`${t('editorPlaceholder', locale)}SELECT * FROM customers;\n`);
+  }, [applySeed, locale]);
 
   const runSql = useCallback(
     async (sql: string) => {
