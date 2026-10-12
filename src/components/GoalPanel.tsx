@@ -5,7 +5,6 @@
 
 import type { WinCheck, WinCondition } from '../engine/types';
 import type { Level } from '../levels/types';
-import { localize } from '../levels/types';
 import { type Locale, t } from '../i18n';
 import { ResultGrid } from './ResultGrid';
 
@@ -56,26 +55,28 @@ export function GoalPanel({
       <aside className="panel goal-panel">
         <div className="panel-header">
           <span>{t('goal', locale)}</span>
-          <span>hidden</span>
+          <span>{t('hiddenGoal', locale)}</span>
         </div>
         <div className="empty-state">
-          {locale === 'de'
-            ? 'Ziel ausgeblendet. Klicken Sie in der Symbolleiste auf Ziel.'
-            : locale === 'en'
-            ? 'Goal hidden. Click Goal in the toolbar to display.'
-            : 'هدف مخفی است. روی دکمه هدف در نوار بالا کلیک کنید.'}
+          {t('goalHiddenMsg', locale)}
         </div>
       </aside>
     );
   }
 
   const preview = goalPreview(level.goal);
+  const goalTypeLabel =
+    level.goal.type === 'result'
+      ? (locale === 'fa' ? 'خروجی کوئری' : locale === 'de' ? 'Ergebnis' : 'result')
+      : level.goal.type === 'table'
+      ? (locale === 'fa' ? 'جدول هدف' : locale === 'de' ? 'Zieltabelle' : 'table')
+      : (locale === 'fa' ? 'طرح جداول' : locale === 'de' ? 'Schema' : 'schema');
 
   return (
     <aside className={`panel goal-panel${solved ? ' solved' : ''}`}>
       <div className="panel-header">
         <span>{t('goal', locale)}</span>
-        <span>{level.goal.type}</span>
+        <span>{goalTypeLabel}</span>
       </div>
       <div className="goal-body">
         <div
@@ -85,16 +86,9 @@ export function GoalPanel({
             ? t('solvedTitle', locale)
             : win
               ? win.reason
-              : locale === 'de'
-              ? 'Erreichen Sie dieses Ergebnis, um das Level zu beenden.'
-              : locale === 'en'
-              ? 'Match this result to clear the level.'
-              : 'برای قبولی در این مرحله، خروجی کوئری خود را با این جدول تطبیق دهید.'}
+              : t('matchGoalMsg', locale)}
         </div>
         <ResultGrid result={preview} cellMatches={cellMatches} />
-        <div className="goal-status">
-          {localize(level.hint, locale)}
-        </div>
       </div>
     </aside>
   );

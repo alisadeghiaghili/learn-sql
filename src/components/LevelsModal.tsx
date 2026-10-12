@@ -37,12 +37,12 @@ function renderDiffDots(difficulty: number) {
  */
 function formatIdealCmds(par: number, locale: Locale): string {
   if (locale === 'fa') {
-    return `ایده‌آل ${par} فرمان`;
+    return `ایده‌آل ${par} کوئری`;
   }
   if (locale === 'de') {
-    return `ideal ${par} Befehl${par === 1 ? '' : 'e'}`;
+    return `ideal ${par} Abfrage${par === 1 ? '' : 'n'}`;
   }
-  return `ideal ${par} cmd${par === 1 ? '' : 's'}`;
+  return `ideal ${par} quer${par === 1 ? 'y' : 'ies'}`;
 }
 
 /**

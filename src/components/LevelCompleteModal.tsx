@@ -63,10 +63,23 @@ export function LevelCompleteModal({
     commandsUsed === 0
       ? `${par} ${t('commandsLabel', locale)}`
       : underPar
-      ? `${commandsUsed} ${t('commandsLabel', locale)} (ایده‌آل ${par} · اجرای تمیز)`
-      : `${commandsUsed} ${t('commandsLabel', locale)} (ایده‌آل ${par} بود — ولی عالی پیش رفتی)`;
+      ? locale === 'fa'
+        ? `${commandsUsed} ${t('commandsLabel', locale)} (ایده‌آل: ${par} · اجرای بهینه و تمیز)`
+        : locale === 'de'
+        ? `${commandsUsed} ${t('commandsLabel', locale)} (Ideal: ${par} · Saubere Lösung)`
+        : `${commandsUsed} ${t('commandsLabel', locale)} (Ideal par: ${par} · Clean run)`
+      : locale === 'fa'
+      ? `${commandsUsed} ${t('commandsLabel', locale)} (ایده‌آل: ${par} بود — ولی عالی حل کردی)`
+      : locale === 'de'
+      ? `${commandsUsed} ${t('commandsLabel', locale)} (Ideal: ${par} — toll gemeistert)`
+      : `${commandsUsed} ${t('commandsLabel', locale)} (Ideal: ${par} — great job clearing it)`;
 
-  const shareText = `من مرحله «${levelName}» را در LearnSQL حل کردم! 🚀\nتعداد کوئری: ${commandsUsed} (ایده‌آل: ${par})\nپیشرفت کل: ${solvedCount}/${total} مرحله.\nتمرین تعاملی SQL در مرورگر:\n${SHARE_URL}`;
+  const shareText =
+    locale === 'fa'
+      ? `من مرحله «${levelName}» را در LearnSQL حل کردم! 🚀\nتعداد کوئری: ${commandsUsed} (ایده‌آل: ${par})\nپیشرفت کل: ${solvedCount}/${total} مرحله.\nتمرین تعاملی SQL در مرورگر:\n${SHARE_URL}`
+      : locale === 'de'
+      ? `Ich habe das Level „${levelName}“ in LearnSQL gemeistert! 🚀\nAbfragen: ${commandsUsed} (Ideal: ${par})\nGesamtfortschritt: ${solvedCount}/${total} Level.\nInteraktives SQL im Browser:\n${SHARE_URL}`
+      : `I just cleared "${levelName}" on LearnSQL! 🚀\nQueries: ${commandsUsed} (Ideal par: ${par})\nCurriculum progress: ${solvedCount}/${total} levels.\nInteractive SQL in the browser:\n${SHARE_URL}`;
 
   const handleCopy = async () => {
     try {
@@ -74,7 +87,7 @@ export function LevelCompleteModal({
       setCopyStatus(t('copyOk', locale));
       setTimeout(() => setCopyStatus(null), 2500);
     } catch {
-      setCopyStatus('کپی نشد');
+      setCopyStatus(t('copyFail', locale));
       setTimeout(() => setCopyStatus(null), 2500);
     }
   };

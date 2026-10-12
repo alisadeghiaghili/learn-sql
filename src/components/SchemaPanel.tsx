@@ -41,11 +41,11 @@ export function SchemaPanel({ tables, onInsertTableName, locale = 'fa' }: Schema
                   textAlign: 'left',
                 }}
                 onClick={() => onInsertTableName?.(table.name)}
-                title="Insert table name into editor"
+                title={locale === 'fa' ? 'افزودن نام جدول به ویرایشگر' : locale === 'de' ? 'Tabellennamen in den Editor einfügen' : 'Insert table name into editor'}
               >
                 {table.name}
               </button>
-              <em>{table.rowCount} {locale === 'de' ? 'Zeilen' : locale === 'en' ? 'rows' : 'ردیف'}</em>
+              <em>{table.rowCount} {t('rowsLabel', locale)}</em>
             </h3>
             {table.columns.map((col) => (
               <div key={col.name} className="col-row">

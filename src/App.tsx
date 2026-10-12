@@ -300,9 +300,10 @@ export function App() {
           if (m.kind === 'level') {
             const hintText = localize(m.level.hint, locale);
             if (hintText) {
+              const prefix = t('commentHintPrefix', locale);
               const commentLines = hintText
                 .split('\n')
-                .map((line) => `-- 💡 نکته: ${line}`)
+                .map((line) => `-- ${prefix} ${line}`)
                 .join('\n');
               setEditor((prev) => {
                 if (prev.includes(commentLines)) return prev;
@@ -574,7 +575,7 @@ export function App() {
           <div className="editor-wrap">
             <div className="editor-toolbar">
               <button type="button" className="primary" onClick={runEditor}>
-                Run SQL
+                {t('runSql', locale)}
               </button>
               <button
                 type="button"
@@ -583,7 +584,7 @@ export function App() {
                 {t('solution', locale)}
               </button>
               <span className="hint-text">
-                Ctrl/Cmd+Enter runs · Tab completes
+                {t('shortcutHint', locale)}
               </span>
             </div>
             <SqlEditor
@@ -651,6 +652,7 @@ export function App() {
             setShowWelcome(false);
             setShowLevels(true);
           }}
+          locale={locale}
         />
       )}
 
