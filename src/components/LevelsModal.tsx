@@ -87,18 +87,31 @@ export function LevelsModal({
             <div className="legend-title">{t('howToRead', locale)}</div>
             <ul className="legend-list">
               <li>
-                {renderDiffDots(3)}{' '}
-                <span>{t('difficultyLegend', locale)}</span>
+                <span className="legend-symbol">{renderDiffDots(3)}</span>
+                <span className="legend-text">
+                  <strong>{t('difficultyTerm', locale)}</strong>{' '}
+                  {t('difficultyDesc', locale)}
+                </span>
               </li>
               <li>
-                <span className="par-note">{formatIdealCmds(1, locale)}</span>{' '}
-                <span>{t('idealLegend', locale)}</span>
+                <span className="legend-symbol par-preview">
+                  {formatIdealCmds(3, locale)}
+                </span>
+                <span className="legend-text">
+                  <strong>{t('idealTerm', locale)}</strong>{' '}
+                  {t('idealDesc', locale)}
+                </span>
               </li>
               <li>
-                <span className="chip ok">
-                  {t('solvedLabel', locale)} 1
-                </span>{' '}
-                <span>{t('solvedLegend', locale)}</span>
+                <span className="legend-symbol">
+                  <span className="chip ok">
+                    {t('solvedLabel', locale)} 3
+                  </span>
+                </span>
+                <span className="legend-text">
+                  <strong>{t('solvedTerm', locale)}</strong>{' '}
+                  {t('solvedDesc', locale)}
+                </span>
               </li>
             </ul>
           </div>
@@ -125,21 +138,19 @@ export function LevelsModal({
                       <span className="id">{level.id}</span>
                       <span className="name">{localize(level.name, locale)}</span>
                       <span className="par-note">{formatIdealCmds(par, locale)}</span>
-                      <span
-                        className={`chip ${solved ? 'ok' : ''}`}
-                        title={t('difficultyOf', locale).replace('{n}', String(diff))}
-                      >
-                        {solved ? (
-                          `${t('solvedLabel', locale)} ${best ?? par}`
-                        ) : (
-                          <span
-                            className="diff-dots-wrap"
-                            aria-label={t('difficultyOf', locale).replace('{n}', String(diff))}
-                          >
-                            {renderDiffDots(diff)}
-                          </span>
-                        )}
-                      </span>
+                      {solved ? (
+                        <span className="chip ok">
+                          {t('solvedLabel', locale)} {best ?? par}
+                        </span>
+                      ) : (
+                        <span
+                          className="diff-dots-wrap"
+                          title={t('difficultyOf', locale).replace('{n}', String(diff))}
+                          aria-label={t('difficultyOf', locale).replace('{n}', String(diff))}
+                        >
+                          {renderDiffDots(diff)}
+                        </span>
+                      )}
                     </button>
                   );
                 })}

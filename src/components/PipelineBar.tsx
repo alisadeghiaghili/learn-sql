@@ -2,6 +2,8 @@
  * Query pipeline strip — clause stages that light up while a statement runs.
  */
 
+import { type Locale, t } from '../i18n';
+
 export type PipeStage = 'from' | 'join' | 'where' | 'group' | 'having' | 'select' | 'order' | 'limit';
 
 const STAGES: { id: PipeStage; label: string }[] = [
@@ -39,6 +41,7 @@ interface PipelineBarProps {
   active: Set<PipeStage>;
   highlightIndex?: number | null;
   solved?: boolean;
+  locale?: Locale;
 }
 
 /**
@@ -48,29 +51,51 @@ export function PipelineBar({
   active,
   highlightIndex,
   solved,
+  locale = 'fa',
 }: PipelineBarProps) {
+  // Precompute lit stages
+  const litStages = STAGES.map((stage, i) => {
+    return highlightIndex != null
+      ? active.has(stage.id) && countActiveBefore(active, i) <= highlightIndex
+      : active.has(stage.id);
+  });
+
   return (
-    <div className="pipeline" aria-label="Query pipeline">
-      {STAGES.map((stage, i) => {
-        const isActive = active.has(stage.id);
-        const isLit =
-          highlightIndex != null
-            ? active.has(stage.id) && countActiveBefore(active, i) <= highlightIndex
-            : isActive;
-        const cls = [
-          'pipe-stage',
-          isLit ? 'active' : '',
-          solved && isActive ? 'matched' : '',
-        ]
-          .filter(Boolean)
-          .join(' ');
-        return (
-          <span key={stage.id} style={{ display: 'contents' }}>
-            {i > 0 && <span className="pipe-arrow">→</span>}
-            <span className={cls}>{stage.label}</span>
-          </span>
-        );
-      })}
+    <div className="pipeline-section" aria-label="Query pipeline">
+      <div className="pipeline-header">
+        <span className="pipeline-title">{t('executionOrderTitle', locale)}</span>
+      </div>
+      <div className="pipeline">
+        {STAGES.map((stage, i) => {
+          const isActive = active.has(stage.id);
+          const isLit = litStages[i];
+          const cls = [
+            'pipe-stage',
+            isLit ? 'active' : '',
+            solved && isActive ? 'matched' : '',
+          ]
+            .filter(Boolean)
+            .join(' ');
+
+          // An arrow before stage i (i > 0) connects stage i - 1 to stage i.
+          // It should light up if the preceding stage is lit AND at least one subsequent stage (from i onward) is lit.
+          const isArrowLit =
+            i > 0 &&
+            litStages[i - 1] &&
+            litStages.slice(i).some(Boolean);
+
+          return (
+            <span key={stage.id} style={{ display: 'contents' }}>
+              {i > 0 && (
+                <span className={`pipe-arrow ${isArrowLit ? 'active' : ''}`}>
+                  →
+                </span>
+              )}
+              <span className={cls}>{stage.label}</span>
+            </span>
+          );
+        })}
+      </div>
     </div>
   );
 }

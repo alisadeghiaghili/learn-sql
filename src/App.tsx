@@ -617,17 +617,12 @@ export function App() {
       </header>
 
       <div className="main">
-        <SchemaPanel
-          tables={tables}
-          onInsertTableName={(name) => setEditor((e) => e + name)}
-          locale={locale}
-        />
-
         <section className="workbench">
           <PipelineBar
             active={pipeActive}
             highlightIndex={pipeHighlight}
             solved={solved}
+            locale={locale}
           />
           <div className="editor-wrap">
             <div className="editor-toolbar">
@@ -674,14 +669,21 @@ export function App() {
           />
         </section>
 
-        <GoalPanel
-          level={activeLevel}
-          win={win}
-          visible={showGoal && !!activeLevel}
-          solved={solved}
-          cellMatches={cellMatches}
-          locale={locale}
-        />
+        <aside className="side-rail">
+          <GoalPanel
+            level={activeLevel}
+            win={win}
+            visible={showGoal && !!activeLevel}
+            solved={solved}
+            cellMatches={cellMatches}
+            locale={locale}
+          />
+          <SchemaPanel
+            tables={tables}
+            onInsertTableName={(name) => setEditor((e) => e + name)}
+            locale={locale}
+          />
+        </aside>
       </div>
 
       <Console lines={lines} onSubmit={onSubmitConsole} />
