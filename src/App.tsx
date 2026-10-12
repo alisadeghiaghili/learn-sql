@@ -18,12 +18,7 @@ import {
 } from './levels';
 import { localize } from './levels/types';
 import { LOCALES, type Locale, t } from './i18n';
-import {
-  HELP_TEXT,
-  parseConsoleInput,
-  type MetaCommand,
-} from './commands/meta';
-import { Console, type LogLine } from './components/Console';
+import type { MetaCommand } from './commands/meta';
 import { SchemaPanel } from './components/SchemaPanel';
 import { ResultGrid } from './components/ResultGrid';
 import { PipelineBar, detectStages, type PipeStage } from './components/PipelineBar';
@@ -77,11 +72,6 @@ function saveGolf(map: Record<string, number>): void {
   localStorage.setItem(GOLF_KEY, JSON.stringify(map));
 }
 
-let logId = 1;
-
-/**
- * Root application component.
- */
 export function App() {
   const [mode, setMode] = useState<Mode>({ kind: 'sandbox' });
   const [db, setDb] = useState<LearnSqlDb | null>(null);
@@ -91,8 +81,7 @@ export function App() {
   const [cellMatches, setCellMatches] = useState<boolean[][] | undefined>();
   const [win, setWin] = useState<WinCheck | null>(null);
   const [solved, setSolved] = useState(false);
-  const [lines, setLines] = useState<LogLine[]>([]);
-  const [editor, setEditor] = useState('-- Write SQL here, or type help in the console\nSELECT * FROM customers;\n');
+  const [editor, setEditor] = useState('-- Write SQL here, or click Lesson for guidance\nSELECT * FROM customers;\n');
   const [showGoal, setShowGoal] = useState(true);
   const [showLevels, setShowLevels] = useState(false);
   const [complete, setComplete] = useState<{ level: Level; next: Level | null } | null>(null);
@@ -138,10 +127,6 @@ export function App() {
   const editorRef = useRef<HTMLTextAreaElement | null>(null);
   const pendingCursor = useRef<number | null>(null);
 
-  const pushLog = useCallback((text: string, kind: LogLine['kind'] = 'info') => {
-    setLines((prev) => [...prev, { id: logId++, text, kind }]);
-  }, []);
-
   const refreshSchema = useCallback((database: LearnSqlDb) => {
     try {
       setTables(database.listTables());
@@ -178,8 +163,6 @@ export function App() {
       }
       setDb(database);
       refreshSchema(database);
-      pushLog('LearnSQL ready. Type help for commands. levels opens challenges.', 'muted');
-      pushLog('Sandbox mode — shop schema (customers, products, orders).', 'muted');
     })();
     return () => {
       cancelled = true;
@@ -210,18 +193,15 @@ export function App() {
       setPipeActive(new Set());
       setPipeHighlight(null);
       setEditor('-- ' + localize(level.name) + '\n');
-      pushLog(`Level: ${localize(level.name)}`, 'ok');
-      pushLog(localize(level.hint) ? `Hint: ${localize(level.hint)}` : 'Type hint for help.', 'muted');
     },
-    [applySeed, pushLog],
+    [applySeed],
   );
 
   const enterSandbox = useCallback(async () => {
     await applySeed(shopSchema, shopSeed);
     setMode({ kind: 'sandbox' });
     setEditor('SELECT * FROM customers;\n');
-    pushLog('Sandbox mode.', 'ok');
-  }, [applySeed, pushLog]);
+  }, [applySeed]);
 
   const runSql = useCallback(
     async (sql: string) => {
@@ -247,11 +227,9 @@ export function App() {
       void snapshot;
 
       try {
-        pushLog('> ' + sql.replace(/\n/g, ' ').slice(0, 120), 'cmd');
         const res = db.run(sql);
         setResult(res);
         setError(null);
-        pushLog(res.message ?? 'OK', 'ok');
         setStatementsIssued((n) => n + 1);
 
         refreshSchema(db);
@@ -307,16 +285,8 @@ export function App() {
               saveGolf(updated);
               return updated;
             });
-            pushLog('Level solved!', 'ok');
             const nextLevel = getNextLevel(id);
-            if (nextLevel) {
-              pushLog(`Next: ${localize(nextLevel.name)} (${nextLevel.id}). Type "level ${nextLevel.id}" or open levels.`, 'muted');
-            } else {
-              pushLog('Sequence complete. Open levels to keep going.', 'ok');
-            }
             setComplete({ level: m.level, next: nextLevel ?? null });
-          } else if (!check.solved) {
-            pushLog(check.reason, 'muted');
           }
         }
       } catch (err) {
@@ -324,33 +294,31 @@ export function App() {
         setError(msg);
         setResult(null);
         setCellMatches(undefined);
-        pushLog(msg, 'err');
       }
     },
-    [db, pushLog, refreshSchema, solved, statementsIssued],
+    [db, refreshSchema, solved, statementsIssued],
   );
 
   const handleMeta = useCallback(
     async (cmd: MetaCommand) => {
       switch (cmd.kind) {
         case 'help':
-          pushLog(HELP_TEXT, 'muted');
+          setShowWelcome(true);
           return;
         case 'levels':
           setShowLevels(true);
           return;
         case 'hint': {
           const m = modeRef.current;
-          if (m.kind === 'level') pushLog(localize(m.level.hint), 'ok');
-          else pushLog('Sandbox has no hint. Open levels for challenges.', 'muted');
+          if (m.kind === 'level' && m.level.startDialog) {
+            setMode({ ...m, intro: true });
+          }
           return;
         }
         case 'lesson': {
           const m = modeRef.current;
           if (m.kind === 'level') {
             setMode({ ...m, intro: true });
-          } else {
-            pushLog('No level intro in sandbox. Open levels first.', 'muted');
           }
           return;
         }
@@ -364,9 +332,6 @@ export function App() {
           const m = modeRef.current;
           if (m.kind === 'level') {
             setEditor(m.level.solution + '\n');
-            pushLog('Solution loaded into the editor. Run it when ready.', 'ok');
-          } else {
-            pushLog('No solution in sandbox.', 'muted');
           }
           return;
         }
@@ -374,20 +339,16 @@ export function App() {
           const m = modeRef.current;
           if (m.kind === 'level') {
             await applySeed(m.level.schema, m.level.seed);
-            pushLog('Database reset to seed.', 'ok');
           } else {
             await applySeed(shopSchema, shopSeed);
-            pushLog('Database reset to shop seed.', 'ok');
           }
           return;
         }
         case 'undo': {
-          pushLog('Undo restores the database to the pre-statement snapshot (best-effort).', 'muted');
           const m = modeRef.current;
           const schema = m.kind === 'level' ? m.level.schema : shopSchema;
           const seed = m.kind === 'level' ? m.level.seed : shopSeed;
           await applySeed(schema, seed);
-          pushLog('Database rebuilt from seed (full undo of mutations).', 'ok');
           return;
         }
         case 'sandbox':
@@ -395,11 +356,9 @@ export function App() {
           return;
         case 'level': {
           const level = getLevel(cmd.id);
-          if (!level) {
-            pushLog(`Unknown level "${cmd.id}". Type levels to browse.`, 'err');
-            return;
+          if (level) {
+            await enterLevel(level, false);
           }
-          await enterLevel(level, false);
           return;
         }
         case 'sql':
@@ -407,16 +366,7 @@ export function App() {
           return;
       }
     },
-    [applySeed, enterLevel, enterSandbox, pushLog, runSql],
-  );
-
-  const onSubmitConsole = useCallback(
-    (input: string) => {
-      // Editor run path uses runSql; console can do both.
-      const cmd = parseConsoleInput(input);
-      void handleMeta(cmd);
-    },
-    [handleMeta],
+    [applySeed, enterLevel, enterSandbox, runSql],
   );
 
   const runEditor = useCallback(() => {
@@ -636,7 +586,7 @@ export function App() {
                 {t('solution', locale)}
               </button>
               <span className="hint-text">
-                Ctrl/Cmd+Enter runs · Tab completes · console accepts meta commands
+                Ctrl/Cmd+Enter runs · Tab completes
               </span>
             </div>
             <textarea
@@ -685,8 +635,6 @@ export function App() {
           />
         </aside>
       </div>
-
-      <Console lines={lines} onSubmit={onSubmitConsole} />
 
       <LevelsModal
         open={showLevels}
