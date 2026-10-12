@@ -7,6 +7,16 @@ import { introLevels } from './intro/selectBasics';
 import { filtersLevels } from './filters/compound';
 import { joinsLevels } from './joins/joinBasics';
 import { groupsLevels } from './groups/aggregates';
+import { functionLevels } from './functions';
+import { advancedJoinLevels } from './advanced-joins';
+import { subqueryLevels } from './subqueries';
+import { windowLevels } from './window';
+import { ddlLevels } from './ddl';
+import { dmlLevels } from './dml';
+import { setOpsLevels } from './set-ops';
+import { viewLevels } from './views';
+import { performanceLevels } from './performance';
+import { transactionLevels } from './transactions';
 import { shopSchema, shopSeed } from './shopSchema';
 
 export const sequences: SequenceInfo[] = [
@@ -33,6 +43,66 @@ export const sequences: SequenceInfo[] = [
     displayName: 'Aggregation',
     about: 'COUNT, SUM, GROUP BY, and HAVING.',
     levels: groupsLevels,
+  },
+  {
+    id: 'functions',
+    displayName: 'Functions & CASE',
+    about: 'String, math, and date functions, CASE, NULL handling, and casting.',
+    levels: functionLevels,
+  },
+  {
+    id: 'advanced-joins',
+    displayName: 'Advanced Joins',
+    about: 'CROSS, SELF, RIGHT, and FULL OUTER joins (SQLite workarounds included).',
+    levels: advancedJoinLevels,
+  },
+  {
+    id: 'subqueries',
+    displayName: 'Subqueries & CTEs',
+    about: 'Scalar / IN / EXISTS subqueries, derived tables, WITH, and recursive CTEs.',
+    levels: subqueryLevels,
+  },
+  {
+    id: 'window',
+    displayName: 'Window Functions',
+    about: 'Ranking, running totals, PARTITION BY, and LAG/LEAD.',
+    levels: windowLevels,
+  },
+  {
+    id: 'ddl',
+    displayName: 'DDL & Schema Design',
+    about: 'CREATE / ALTER / DROP, data types, and constraints.',
+    levels: ddlLevels,
+  },
+  {
+    id: 'dml',
+    displayName: 'Modifying Data (DML)',
+    about: 'INSERT, UPDATE, DELETE, and upserts.',
+    levels: dmlLevels,
+  },
+  {
+    id: 'set-ops',
+    displayName: 'Set Operations',
+    about: 'UNION, UNION ALL, INTERSECT, and EXCEPT.',
+    levels: setOpsLevels,
+  },
+  {
+    id: 'views',
+    displayName: 'Views',
+    about: 'CREATE VIEW, complex views, and the materialized-view pattern.',
+    levels: viewLevels,
+  },
+  {
+    id: 'performance',
+    displayName: 'Indexes & Performance',
+    about: 'CREATE INDEX, EXPLAIN QUERY PLAN, composite indexes, and tuning.',
+    levels: performanceLevels,
+  },
+  {
+    id: 'transactions',
+    displayName: 'Transactions & ACID',
+    about: 'BEGIN / COMMIT / ROLLBACK, atomic operations, and isolation.',
+    levels: transactionLevels,
   },
 ];
 
