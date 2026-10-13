@@ -282,8 +282,8 @@ button:disabled {
   min-height: 36px;
   padding: 0;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: transparent;
+  border-radius: var(--radius);
+  background: var(--raised);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 15px;
