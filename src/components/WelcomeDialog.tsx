@@ -5,6 +5,7 @@
 import { type ReactNode, useEffect, useRef } from 'react';
 import { allLevels } from '../levels';
 import { type Locale, t } from '../i18n';
+import { SqlLogo } from './SqlLogo';
 
 export const COFFEE_URL = 'https://www.buymeacoffee.com/alisadeghil';
 export const GITHUB_URL = 'https://github.com/alisadeghiaghili/learn-sql';
@@ -93,7 +94,10 @@ export function WelcomeDialog({ onClose, onOpenLevels, locale = 'fa' }: WelcomeD
         style={{ direction: isRtl ? 'rtl' : 'ltr' }}
       >
         <div className="modal-body welcome-body">
-          <h1 className="welcome-title">LearnSQL</h1>
+          <h1 className="welcome-title">
+            <SqlLogo className="welcome-logo" />
+            LearnSQL
+          </h1>
 
           {locale === 'fa' ? (
             <>

@@ -32,6 +32,7 @@ import {
 } from './components/WelcomeDialog';
 import { LevelCompleteModal } from './components/LevelCompleteModal';
 import { SqlEditor } from './components/SqlEditor';
+import { SqlLogo } from './components/SqlLogo';
 import { launchConfetti, playFanfare } from './confetti';
 
 type Mode =
@@ -426,7 +427,8 @@ export function App() {
     <div className="app">
       <header className="toolbar">
         <div className="brand">
-          LEARN<span>SQL</span>
+          <SqlLogo className="brand-logo" />
+          <span>LEARN</span>SQL
         </div>
         <div className="level-title">
           {activeLevel ? localize(activeLevel.name, locale) : t('sandbox', locale)}

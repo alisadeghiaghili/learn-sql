@@ -104,12 +104,24 @@ button:disabled {
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--mono);
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.02em;
   color: var(--accent);
   flex-shrink: 0;
+  user-select: none;
+}
+
+.brand-logo {
+  width: 22px;
+  height: 22px;
+  display: block;
+  flex-shrink: 0;
+  border-radius: 5px;
 }
 
 .brand span {
@@ -1319,11 +1331,22 @@ button:disabled {
 }
 
 .welcome-body h1.welcome-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin: 0 0 12px;
   font-size: 28px;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ink);
+}
+
+.welcome-logo {
+  width: 36px;
+  height: 36px;
+  display: block;
+  flex-shrink: 0;
+  border-radius: 8px;
 }
 
 .welcome-h2 {
