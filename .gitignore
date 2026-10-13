@@ -6,3 +6,4 @@ output
 *.local
 .vite
 *.tsbuildinfo
+.claude/
