@@ -1,5 +1,5 @@
 /**
- * RStudio / dplyr cheat-sheet style schematic diagrams for SQL operations.
+ * Visual schematic diagrams for SQL operations.
  * Fluently localized in Persian (fa), English (en), and German (de).
  */
 
@@ -58,7 +58,6 @@ function KeyBadge({ val }: { val: string | number | null }) {
 
 const TEXTS: Record<Locale, Record<string, string>> = {
   fa: {
-    sheetBadge: 'چیت‌شیت به سبک RStudio',
     tblLeft: 'جدول A (سمت چپ / x)',
     tblRight: 'جدول B (سمت راست / y)',
     tblLeftPreserved: 'جدول A (چپ — محفوظ)',
@@ -84,16 +83,15 @@ const TEXTS: Record<Locale, Record<string, string>> = {
     ruleFull: 'تمام ردیف‌ها از هر دو جدول حفظ می‌شوند و بخش‌های بدون جفت با NULL پر می‌شوند.',
     ruleCross: 'هر ردیف جدول چپ با تمام ردیف‌های جدول راست ترکیب می‌شود (ضرب دکارتی N × M بدون شرط ON).',
     ruleSelf: 'اتصال جدول به خودش با دو نام مستعار مجزا برای داده‌های سلسله‌مراتبی و درختی.',
-    ruleSelect: 'عملیات Projection عمودی: فقط ستون‌های اعلام‌شده در SELECT حفظ می‌شوند و ستون‌های زائد کنار گذاشته می‌شوند.',
-    ruleWhere: 'عملیات Filter افقی: ردیف‌ها تک‌تک بررسی می‌شوند. ردیف‌های با شرط نادرست یا NULL دور ریخته می‌شوند.',
-    ruleOrderLimit: 'ردیف‌ها بر اساس ستون مرتب شده (DESC یا ASC) و دستور LIMIT فقط N ردیف بالای جدول مرتب‌شده را برش می‌زند.',
-    ruleGroupBy: 'ردیف‌های با دسته یکسان فشرده شده و مقادیر دیگر توسط توابعی مثل COUNT یا SUM در یک عدد خلاصه می‌شوند.',
+    ruleSelect: 'انتخاب عمودی ستون‌ها (Projection): تنها ستون‌های مشخص‌شده در SELECT برگردانده شده و ستون‌های غیرضروری کنار گذاشته می‌شوند.',
+    ruleWhere: 'فیلتر افقی ردیف‌ها (Selection): هر ردیف با شرط ارزیابی می‌شود؛ ردیف‌هایی که شرط برای آن‌ها برقرار نباشد (FALSE یا NULL) حذف می‌شوند.',
+    ruleOrderLimit: 'ردیف‌ها بر اساس ستون مشخص مرتب شده (نزولی DESC یا صعودی ASC) و دستور LIMIT تعداد N ردیف اول جدول مرتب‌شده را انتخاب می‌کند.',
+    ruleGroupBy: 'ردیف‌های دارای مقدار یکسان در ستون دسته‌بندی با یکدیگر ادغام شده و ستون‌های دیگر توسط توابع تجمیعی (مانند COUNT یا SUM) خلاصه می‌شوند.',
     setA: 'مجموعه A',
     setB: 'مجموعه B',
     setResult: 'خروجی',
   },
   en: {
-    sheetBadge: 'RStudio Style Cheat Sheet',
     tblLeft: 'Table A (Left / x)',
     tblRight: 'Table B (Right / y)',
     tblLeftPreserved: 'Table A (Left — Preserved)',
@@ -128,7 +126,6 @@ const TEXTS: Record<Locale, Record<string, string>> = {
     setResult: 'Result',
   },
   de: {
-    sheetBadge: 'RStudio Spickzettel-Stil',
     tblLeft: 'Tabelle A (Links / x)',
     tblRight: 'Tabelle B (Rechts / y)',
     tblLeftPreserved: 'Tabelle A (Links — Beibehalten)',
@@ -174,7 +171,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>SELECT name, city (Projection)</strong>
           </div>
           <div className="cs-flow">
@@ -235,7 +231,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>WHERE city = 'London' (Row Filter)</strong>
           </div>
           <div className="cs-flow">
@@ -294,7 +289,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>ORDER BY price DESC LIMIT 2</strong>
           </div>
           <div className="cs-flow">
@@ -362,7 +356,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>GROUP BY category (COUNT / SUM)</strong>
           </div>
           <div className="cs-flow">
@@ -429,7 +422,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>INNER JOIN (x, y)</strong>
           </div>
           <div className="cs-flow">
@@ -518,7 +510,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>LEFT JOIN (x, y)</strong>
           </div>
           <div className="cs-flow">
@@ -612,7 +603,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>RIGHT JOIN (x, y)</strong>
           </div>
           <div className="cs-flow">
@@ -706,7 +696,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>FULL OUTER JOIN (x, y)</strong>
           </div>
           <div className="cs-flow">
@@ -803,7 +792,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>CROSS JOIN (Cartesian Product)</strong>
           </div>
           <div className="cs-flow">
@@ -857,7 +845,6 @@ export function CheatSheetDiagram({ type, locale = 'fa' }: CheatSheetDiagramProp
       return (
         <div className="cs-container">
           <div className="cs-title-bar">
-            <span className="cs-badge-kind">{txt.sheetBadge}</span>
             <strong>SELF JOIN (employees e ⋈ employees m)</strong>
           </div>
           <div className="cs-flow">
@@ -940,7 +927,6 @@ function renderSetOpsDiagram(type: string, locale: Locale = 'fa') {
   return (
     <div className="cs-container">
       <div className="cs-title-bar">
-        <span className="cs-badge-kind">{txt.sheetBadge}</span>
         <strong>{opTitle}</strong>
       </div>
       <div className="cs-flow">

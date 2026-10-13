@@ -18,12 +18,7 @@ import {
 } from './levels';
 import { localize } from './levels/types';
 import { LOCALES, type Locale, t } from './i18n';
-import {
-  HELP_TEXT,
-  parseConsoleInput,
-  type MetaCommand,
-} from './commands/meta';
-import { Console, type LogLine } from './components/Console';
+import type { MetaCommand } from './commands/meta';
 import { SchemaPanel } from './components/SchemaPanel';
 import { ResultGrid } from './components/ResultGrid';
 import { PipelineBar, detectStages, type PipeStage } from './components/PipelineBar';
@@ -36,9 +31,11 @@ import {
   GITHUB_URL,
 } from './components/WelcomeDialog';
 import { LevelCompleteModal } from './components/LevelCompleteModal';
+import { SqlEditor } from './components/SqlEditor';
+import { SqlLogo } from './components/SqlLogo';
+import { launchConfetti, playFanfare } from './confetti';
 import { UiGuideModal } from './components/UiGuideModal';
 import { guideRegions } from './uiGuide';
-import { buildCandidates, completeToken } from './autocomplete';
 
 type Mode =
   | { kind: 'sandbox' }
@@ -79,11 +76,6 @@ function saveGolf(map: Record<string, number>): void {
   localStorage.setItem(GOLF_KEY, JSON.stringify(map));
 }
 
-let logId = 1;
-
-/**
- * Root application component.
- */
 export function App() {
   const [mode, setMode] = useState<Mode>({ kind: 'sandbox' });
   const [db, setDb] = useState<LearnSqlDb | null>(null);
@@ -93,8 +85,14 @@ export function App() {
   const [cellMatches, setCellMatches] = useState<boolean[][] | undefined>();
   const [win, setWin] = useState<WinCheck | null>(null);
   const [solved, setSolved] = useState(false);
-  const [lines, setLines] = useState<LogLine[]>([]);
-  const [editor, setEditor] = useState('-- Write SQL here, or type help in the console\nSELECT * FROM customers;\n');
+  const [locale, setLocale] = useState<Locale>(() => {
+    try {
+      const saved = localStorage.getItem('learnsql.lang') as Locale;
+      if (saved === 'fa' || saved === 'en' || saved === 'de') return saved;
+    } catch {}
+    return 'fa';
+  });
+  const [editor, setEditor] = useState(() => `${t('editorPlaceholder', locale)}SELECT * FROM customers;\n`);
   const [showGoal, setShowGoal] = useState(true);
   const [showLevels, setShowLevels] = useState(false);
   const [complete, setComplete] = useState<{ level: Level; next: Level | null } | null>(null);
@@ -103,19 +101,59 @@ export function App() {
   const [pipeActive, setPipeActive] = useState<Set<PipeStage>>(new Set());
   const [pipeHighlight, setPipeHighlight] = useState<number | null>(null);
   const [statementsIssued, setStatementsIssued] = useState(0);
-  const [locale, setLocale] = useState<Locale>(() => {
-    try {
-      const saved = localStorage.getItem('learnsql.lang') as Locale;
-      if (saved === 'fa' || saved === 'en' || saved === 'de') return saved;
-    } catch {}
-    return 'fa';
-  });
 
   const changeLocale = useCallback((newLoc: Locale) => {
     setLocale(newLoc);
     try {
       localStorage.setItem('learnsql.lang', newLoc);
     } catch {}
+
+    setEditor((prev) => {
+      let updated = prev;
+      // 1. Translate editor placeholder comment if present
+      for (const loc of ['fa', 'en', 'de'] as Locale[]) {
+        const ph = t('editorPlaceholder', loc);
+        if (updated.includes(ph)) {
+          updated = updated.replace(ph, t('editorPlaceholder', newLoc));
+        }
+      }
+
+      // 2. Translate hint comments if active level
+      const currentMode = modeRef.current;
+      if (currentMode.kind === 'level') {
+        const currentLevel = currentMode.level;
+        // Translate hint block
+        for (const loc of ['fa', 'en', 'de'] as Locale[]) {
+          const oldHint = localize(currentLevel.hint, loc);
+          const oldPrefix = t('commentHintPrefix', loc);
+          if (oldHint) {
+            const oldLines = oldHint
+              .split('\n')
+              .map((line) => `-- ${oldPrefix} ${line}`)
+              .join('\n');
+            if (updated.includes(oldLines)) {
+              const newHint = localize(currentLevel.hint, newLoc);
+              const newPrefix = t('commentHintPrefix', newLoc);
+              const newLines = newHint
+                .split('\n')
+                .map((line) => `-- ${newPrefix} ${line}`)
+                .join('\n');
+              updated = updated.replace(oldLines, newLines);
+            }
+          }
+        }
+
+        // Translate level header comment
+        for (const loc of ['fa', 'en', 'de'] as Locale[]) {
+          const oldHeader = `-- ${localize(currentLevel.name, loc)}\n`;
+          if (updated.startsWith(oldHeader)) {
+            const newHeader = `-- ${localize(currentLevel.name, newLoc)}\n`;
+            updated = newHeader + updated.slice(oldHeader.length);
+          }
+        }
+      }
+      return updated;
+    });
   }, []);
 
   useEffect(() => {
@@ -138,12 +176,6 @@ export function App() {
   const undoStack = useRef<Snapshot[]>([]);
   const modeRef = useRef(mode);
   modeRef.current = mode;
-  const editorRef = useRef<HTMLTextAreaElement | null>(null);
-  const pendingCursor = useRef<number | null>(null);
-
-  const pushLog = useCallback((text: string, kind: LogLine['kind'] = 'info') => {
-    setLines((prev) => [...prev, { id: logId++, text, kind }]);
-  }, []);
 
   const refreshSchema = useCallback((database: LearnSqlDb) => {
     try {
@@ -181,28 +213,12 @@ export function App() {
       }
       setDb(database);
       refreshSchema(database);
-      pushLog('LearnSQL ready. Type help for commands. levels opens challenges.', 'muted');
-      pushLog('Sandbox mode — shop schema (customers, products, orders).', 'muted');
     })();
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // After a Tab completion rewrites `editor`, the browser resets the caret to
-  // the end of the textarea. Restore it to the recorded position, but only
-  // after React has committed the new value (hence the [editor] dep).
-  useEffect(() => {
-    if (pendingCursor.current != null) {
-      const el = editorRef.current;
-      if (el) {
-        el.focus();
-        el.setSelectionRange(pendingCursor.current, pendingCursor.current);
-      }
-      pendingCursor.current = null;
-    }
-  }, [editor]);
 
   const enterLevel = useCallback(
     async (level: Level, withIntro: boolean) => {
@@ -212,19 +228,16 @@ export function App() {
       setShowGoal(true);
       setPipeActive(new Set());
       setPipeHighlight(null);
-      setEditor('-- ' + localize(level.name) + '\n');
-      pushLog(`Level: ${localize(level.name)}`, 'ok');
-      pushLog(localize(level.hint) ? `Hint: ${localize(level.hint)}` : 'Type hint for help.', 'muted');
+      setEditor('-- ' + localize(level.name, locale) + '\n');
     },
-    [applySeed, pushLog],
+    [applySeed, locale],
   );
 
   const enterSandbox = useCallback(async () => {
     await applySeed(shopSchema, shopSeed);
     setMode({ kind: 'sandbox' });
-    setEditor('SELECT * FROM customers;\n');
-    pushLog('Sandbox mode.', 'ok');
-  }, [applySeed, pushLog]);
+    setEditor(`${t('editorPlaceholder', locale)}SELECT * FROM customers;\n`);
+  }, [applySeed, locale]);
 
   const runSql = useCallback(
     async (sql: string) => {
@@ -250,11 +263,9 @@ export function App() {
       void snapshot;
 
       try {
-        pushLog('> ' + sql.replace(/\n/g, ' ').slice(0, 120), 'cmd');
         const res = db.run(sql);
         setResult(res);
         setError(null);
-        pushLog(res.message ?? 'OK', 'ok');
         setStatementsIssued((n) => n + 1);
 
         refreshSchema(db);
@@ -310,16 +321,10 @@ export function App() {
               saveGolf(updated);
               return updated;
             });
-            pushLog('Level solved!', 'ok');
             const nextLevel = getNextLevel(id);
-            if (nextLevel) {
-              pushLog(`Next: ${localize(nextLevel.name)} (${nextLevel.id}). Type "level ${nextLevel.id}" or open levels.`, 'muted');
-            } else {
-              pushLog('Sequence complete. Open levels to keep going.', 'ok');
-            }
             setComplete({ level: m.level, next: nextLevel ?? null });
-          } else if (!check.solved) {
-            pushLog(check.reason, 'muted');
+            launchConfetti(4500);
+            playFanfare();
           }
         }
       } catch (err) {
@@ -327,33 +332,42 @@ export function App() {
         setError(msg);
         setResult(null);
         setCellMatches(undefined);
-        pushLog(msg, 'err');
       }
     },
-    [db, pushLog, refreshSchema, solved, statementsIssued],
+    [db, refreshSchema, solved, statementsIssued],
   );
 
   const handleMeta = useCallback(
     async (cmd: MetaCommand) => {
       switch (cmd.kind) {
         case 'help':
-          pushLog(HELP_TEXT, 'muted');
+          setShowWelcome(true);
           return;
         case 'levels':
           setShowLevels(true);
           return;
         case 'hint': {
           const m = modeRef.current;
-          if (m.kind === 'level') pushLog(localize(m.level.hint), 'ok');
-          else pushLog('Sandbox has no hint. Open levels for challenges.', 'muted');
+          if (m.kind === 'level') {
+            const hintText = localize(m.level.hint, locale);
+            if (hintText) {
+              const prefix = t('commentHintPrefix', locale);
+              const commentLines = hintText
+                .split('\n')
+                .map((line) => `-- ${prefix} ${line}`)
+                .join('\n');
+              setEditor((prev) => {
+                if (prev.includes(commentLines)) return prev;
+                return `${commentLines}\n\n${prev}`;
+              });
+            }
+          }
           return;
         }
         case 'lesson': {
           const m = modeRef.current;
           if (m.kind === 'level') {
             setMode({ ...m, intro: true });
-          } else {
-            pushLog('No level intro in sandbox. Open levels first.', 'muted');
           }
           return;
         }
@@ -367,9 +381,6 @@ export function App() {
           const m = modeRef.current;
           if (m.kind === 'level') {
             setEditor(m.level.solution + '\n');
-            pushLog('Solution loaded into the editor. Run it when ready.', 'ok');
-          } else {
-            pushLog('No solution in sandbox.', 'muted');
           }
           return;
         }
@@ -377,20 +388,16 @@ export function App() {
           const m = modeRef.current;
           if (m.kind === 'level') {
             await applySeed(m.level.schema, m.level.seed);
-            pushLog('Database reset to seed.', 'ok');
           } else {
             await applySeed(shopSchema, shopSeed);
-            pushLog('Database reset to shop seed.', 'ok');
           }
           return;
         }
         case 'undo': {
-          pushLog('Undo restores the database to the pre-statement snapshot (best-effort).', 'muted');
           const m = modeRef.current;
           const schema = m.kind === 'level' ? m.level.schema : shopSchema;
           const seed = m.kind === 'level' ? m.level.seed : shopSeed;
           await applySeed(schema, seed);
-          pushLog('Database rebuilt from seed (full undo of mutations).', 'ok');
           return;
         }
         case 'sandbox':
@@ -398,11 +405,9 @@ export function App() {
           return;
         case 'level': {
           const level = getLevel(cmd.id);
-          if (!level) {
-            pushLog(`Unknown level "${cmd.id}". Type levels to browse.`, 'err');
-            return;
+          if (level) {
+            await enterLevel(level, false);
           }
-          await enterLevel(level, false);
           return;
         }
         case 'sql':
@@ -410,16 +415,7 @@ export function App() {
           return;
       }
     },
-    [applySeed, enterLevel, enterSandbox, pushLog, runSql],
-  );
-
-  const onSubmitConsole = useCallback(
-    (input: string) => {
-      // Editor run path uses runSql; console can do both.
-      const cmd = parseConsoleInput(input);
-      void handleMeta(cmd);
-    },
-    [handleMeta],
+    [applySeed, enterLevel, enterSandbox, runSql],
   );
 
   const runEditor = useCallback(() => {
@@ -466,14 +462,15 @@ export function App() {
     <div className="app">
       <header className="toolbar">
         <div className="brand">
-          LEARN<span>SQL</span>
+          <SqlLogo className="brand-logo" />
+          <span>LEARN</span>SQL
         </div>
         <div className="level-title">
           {activeLevel ? localize(activeLevel.name, locale) : t('sandbox', locale)}
         </div>
         <div className="level-meta">
           {activeLevel
-            ? `${t('golf', locale)} ${golf[activeLevel.id] ?? statementsIssued} / ${t('par', locale)} ${activeLevel.golfPar ?? 1}`
+            ? `${t('golf', locale)}: ${golf[activeLevel.id] ?? statementsIssued} · ${t('par', locale)}: ${activeLevel.golfPar ?? 1}`
             : t('freePlay', locale)}
         </div>
         <div className="toolbar-actions">
@@ -652,22 +649,17 @@ export function App() {
       </header>
 
       <div className="main">
-        <SchemaPanel
-          tables={tables}
-          onInsertTableName={(name) => setEditor((e) => e + name)}
-          locale={locale}
-        />
-
         <section className="workbench">
           <PipelineBar
             active={pipeActive}
             highlightIndex={pipeHighlight}
             solved={solved}
+            locale={locale}
           />
           <div className="editor-wrap">
             <div className="editor-toolbar">
               <button type="button" className="primary" onClick={runEditor}>
-                Run SQL
+                {t('runSql', locale)}
               </button>
               <button
                 type="button"
@@ -676,30 +668,15 @@ export function App() {
                 {t('solution', locale)}
               </button>
               <span className="hint-text">
-                Ctrl/Cmd+Enter runs · Tab completes · console accepts meta commands
+                {t('shortcutHint', locale)}
               </span>
             </div>
-            <textarea
-              className="sql-editor"
-              ref={editorRef}
+            <SqlEditor
               value={editor}
-              onChange={(e) => setEditor(e.target.value)}
-              onKeyDown={(e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                  e.preventDefault();
-                  runEditor();
-                } else if (e.key === 'Tab') {
-                  e.preventDefault();
-                  const start = e.currentTarget.selectionStart ?? editor.length;
-                  const res = completeToken(editor, start, buildCandidates(tables));
-                  if (res) {
-                    setEditor(res.value);
-                    pendingCursor.current = res.cursor;
-                  }
-                }
-              }}
-              spellCheck={false}
-              aria-label="SQL editor"
+              onChange={setEditor}
+              onRun={runEditor}
+              tables={tables}
+              placeholder={t('editorPlaceholder', locale)}
             />
           </div>
           <ResultGrid
@@ -709,21 +686,27 @@ export function App() {
           />
         </section>
 
-        <GoalPanel
-          level={activeLevel}
-          win={win}
-          visible={showGoal && !!activeLevel}
-          solved={solved}
-          cellMatches={cellMatches}
-          locale={locale}
-        />
+        <aside className="side-rail">
+          <GoalPanel
+            level={activeLevel}
+            win={win}
+            visible={showGoal && !!activeLevel}
+            solved={solved}
+            cellMatches={cellMatches}
+            locale={locale}
+          />
+          <SchemaPanel
+            tables={tables}
+            onInsertTableName={(name) => setEditor((e) => e + name)}
+            locale={locale}
+          />
+        </aside>
       </div>
-
-      <Console lines={lines} onSubmit={onSubmitConsole} />
 
       <LevelsModal
         open={showLevels}
         solvedIds={solvedIds}
+        golf={golf}
         currentId={activeLevel?.id ?? null}
         onClose={() => setShowLevels(false)}
         onSelect={(id) => {
@@ -753,6 +736,7 @@ export function App() {
             setShowWelcome(false);
             setShowLevels(true);
           }}
+          locale={locale}
         />
       )}
 
@@ -766,8 +750,10 @@ export function App() {
 
       <LevelCompleteModal
         open={complete !== null}
-        levelName={complete ? localize(complete.level.name, locale) : ''}
-        nextName={complete?.next ? localize(complete.next.name, locale) : null}
+        level={complete?.level ?? null}
+        next={complete?.next ?? null}
+        commandsUsed={complete ? (golf[complete.level.id] ?? statementsIssued) : 0}
+        solvedCount={solvedIds.size}
         locale={locale}
         onNext={() => {
           const nxt = complete?.next;

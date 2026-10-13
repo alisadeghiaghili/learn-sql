@@ -72,13 +72,6 @@ export function guideRegions(locale: Locale = 'fa'): GuideRegion[] {
         what: 'هدف مرحلهٔ فعلی و پیش‌نمایش جدول مورد انتظار، به‌همراه وضعیت حل.',
         how: 'هدف را دنبال کنید تا ردیف‌های منطبق سبز شوند و مرحله حل شود.',
       },
-      {
-        id: 'console',
-        selector: '.console',
-        title: 'کنسول دستورات',
-        what: 'پرامپت متنی برای دستورات خاص مثل help، levels، hint و reset.',
-        how: 'یک دستور را تایپ کنید و Enter بزنید؛ مثلاً help برای راهنما.',
-      },
     ];
   }
 
@@ -133,13 +126,6 @@ export function guideRegions(locale: Locale = 'fa'): GuideRegion[] {
         what: 'Das Ziel der aktuellen Stufe und eine Vorschau der erwarteten Tabelle, mit Löse-Status.',
         how: 'Erfülle das Ziel, damit die passenden Zeilen grün werden und der Level gelöst ist.',
       },
-      {
-        id: 'console',
-        selector: '.console',
-        title: 'Befehls-Konsole',
-        what: 'Eine Texteingabe für Spezialbefehle wie help, levels, hint und reset.',
-        how: 'Tippe einen Befehl und drücke Enter, z. B. help für Hilfe.',
-      },
     ];
   }
 
@@ -192,13 +178,6 @@ export function guideRegions(locale: Locale = 'fa'): GuideRegion[] {
       title: 'Level Goal Panel',
       what: "The current level's goal and a preview of the expected table, with solve status.",
       how: 'Match the goal so the matched rows turn green and the level is solved.',
-    },
-    {
-      id: 'console',
-      selector: '.console',
-      title: 'Command Console',
-      what: 'A text prompt for special commands like help, levels, hint and reset.',
-      how: 'Type a command and press Enter, e.g. help for help.',
     },
   ];
 }

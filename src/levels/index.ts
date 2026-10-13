@@ -23,12 +23,12 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'intro',
     displayName: {
-      fa: '۱. مفاهیم پایه و استخراج (SELECT)',
+      fa: '۱. مفاهیم پایه و استخراج داده‌ها (SELECT)',
       en: '1. Introduction to SELECT',
       de: '1. Einführung in SELECT',
     },
     about: {
-      fa: 'انتخاب ستون‌ها، فیلتر WHERE، مرتب‌سازی با ORDER BY و محدود کردن نتایج با LIMIT.',
+      fa: 'انتخاب ستون‌ها، فیلتر ردیف‌ها با WHERE، مرتب‌سازی با ORDER BY و محدود کردن نتایج با LIMIT.',
       en: 'SELECT, columns, WHERE filtering, ORDER BY, and LIMIT.',
       de: 'SELECT, Spalten, WHERE-Filter, ORDER BY und LIMIT.',
     },
@@ -37,12 +37,12 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'filters',
     displayName: {
-      fa: '۲. فیلترهای پیشرفته (WHERE)',
+      fa: '۲. شرط‌ها و فیلترهای پیشرفته (WHERE)',
       en: '2. Advanced Filtering',
       de: '2. Erweiterte Filterung',
     },
     about: {
-      fa: 'شرط‌های ترکیبی AND / OR، عملگرهای IN، BETWEEN، الگوهای LIKE و فیلتر مقادیر NULL.',
+      fa: 'شرط‌های ترکیبی AND / OR، عملگرهای IN و BETWEEN، الگوهای متنی LIKE و رفتار مقادیر NULL.',
       en: 'Compound predicates, IN, BETWEEN, LIKE pattern matching, and NULL handling.',
       de: 'Zusammengesetzte Prädikate, IN, BETWEEN, LIKE-Muster und NULL-Werte.',
     },
@@ -51,26 +51,26 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'joins',
     displayName: {
-      fa: '۳. اتصال پایه‌ای جدول‌ها (JOINs)',
+      fa: '۳. اتصال و پیوند جدول‌ها (JOINs)',
       en: '3. Joining Tables',
       de: '3. Tabellen verknüpfen (JOIN)',
     },
     about: {
-      fa: 'اتصال‌های درونی (INNER JOIN) و بیرونی چپ (LEFT JOIN) با دیاگرام‌های مفهومی چیت‌شیت RStudio.',
-      en: 'INNER JOIN and LEFT JOIN across customers, products, and orders with RStudio-style schematics.',
-      de: 'INNER JOIN und LEFT JOIN über Tabellen hinweg mit RStudio-Spickzettel-Diagrammen.',
+      fa: 'اتصال درونی (INNER JOIN) و اتصال بیرونی چپ (LEFT JOIN) با دیاگرام‌های مفهومی و بصری.',
+      en: 'INNER JOIN and LEFT JOIN across customers, products, and orders with visual schematics.',
+      de: 'INNER JOIN und LEFT JOIN über Tabellen hinweg mit visuellen Spickzettel-Diagrammen.',
     },
     levels: joinsLevels,
   },
   {
     id: 'groups',
     displayName: {
-      fa: '۴. تجمیع و گروه‌بندی (GROUP BY)',
+      fa: '۴. تجمیع و گروه‌بندی داده‌ها (GROUP BY)',
       en: '4. Aggregation & Groups',
       de: '4. Aggregation & Gruppierung',
     },
     about: {
-      fa: 'توابع تجمیعی COUNT، SUM، AVG و فیلتر کردن گروه‌ها با بند HAVING.',
+      fa: 'توابع تجمیعی COUNT، SUM، AVG و فیلتر کردن خروجی گروه‌ها با شرط HAVING.',
       en: 'Aggregate functions (COUNT, SUM, AVG), GROUP BY, and HAVING.',
       de: 'Aggregatfunktionen (COUNT, SUM, AVG), GROUP BY und HAVING.',
     },
@@ -79,12 +79,12 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'functions',
     displayName: {
-      fa: '۵. توابع و منطق شرطی (Functions & CASE)',
+      fa: '۵. توابع محاسباتی و منطق شرطی (Functions & CASE)',
       en: '5. Functions & Conditional Logic',
       de: '5. Funktionen & CASE-Logik',
     },
     about: {
-      fa: 'توابع متنی، ریاضی و تاریخ، منطق شرطی CASE WHEN، توابع مدیریت NULL و CAST.',
+      fa: 'توابع متنی، ریاضی و تاریخ، عبارت‌های شرطی CASE WHEN، مدیریت مقادیر تهی با COALESCE و تبدیل نوع با CAST.',
       en: 'String, math, and date helpers, CASE expressions, COALESCE, and type CAST.',
       de: 'Text-, Mathe- und Datumsfunktionen, CASE-Ausdrücke, COALESCE und Typumwandlung.',
     },
@@ -98,21 +98,21 @@ export const sequences: SequenceInfo[] = [
       de: '6. Fortgeschrittene JOINs',
     },
     about: {
-      fa: 'اتصال ضربی CROSS JOIN، اتصال به خود SELF JOIN، RIGHT JOIN و FULL OUTER JOIN با دیاگرام‌های RStudio.',
-      en: 'CROSS, SELF, RIGHT, and FULL OUTER joins with RStudio cheat sheet schematics.',
-      de: 'CROSS, SELF, RIGHT und FULL OUTER JOINs mit RStudio-Spickzettel-Diagrammen.',
+      fa: 'ضرب دکارتی CROSS JOIN، اتصال جدول به خود SELF JOIN، اتصالات RIGHT JOIN و FULL OUTER JOIN با دیاگرام‌های بصری.',
+      en: 'CROSS, SELF, RIGHT, and FULL OUTER joins with visual schematics.',
+      de: 'CROSS, SELF, RIGHT und FULL OUTER JOINs mit visuellen Diagrammen.',
     },
     levels: advancedJoinLevels,
   },
   {
     id: 'subqueries',
     displayName: {
-      fa: '۷. زیرکوئری‌ها و عبارات جدول (Subqueries & CTEs)',
+      fa: '۷. زیرکوئری‌ها و عبارات جدول مشترک (Subqueries & CTEs)',
       en: '7. Subqueries & CTEs',
       de: '7. Unterabfragen & CTEs',
     },
     about: {
-      fa: 'زیرکوئری‌های اسکالر، عملگرهای IN و EXISTS، جدول‌های مشتق‌شده و CTEهای بازگشتی (Recursive).',
+      fa: 'زیرکوئری‌های تک‌مقداری (Scalar)، عملگرهای IN و EXISTS، جدول‌های مشتق‌شده و CTEهای بازگشتی.',
       en: 'Scalar / IN / EXISTS subqueries, derived tables, WITH (CTEs), and recursive hierarchies.',
       de: 'Skalare / IN / EXISTS Unterabfragen, abgeleitete Tabellen, WITH (CTEs) und rekursive CTEs.',
     },
@@ -121,12 +121,12 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'window',
     displayName: {
-      fa: '۸. توابع پنجره‌ای (Window Functions)',
+      fa: '۸. توابع پنجره‌ای و تحلیلی (Window Functions)',
       en: '8. Window Functions',
       de: '8. Fensterfunktionen',
     },
     about: {
-      fa: 'رتبه‌بندی‌های RANK و DENSE_RANK، مجموع‌های تجمعی (Running Total)، افراز با PARTITION BY و توابع LAG/LEAD.',
+      fa: 'رتبه‌بندی با RANK و DENSE_RANK، محاسبه مجموع تجمعی (Running Total)، افراز با PARTITION BY و توابع LAG/LEAD.',
       en: 'Ranking (RANK, DENSE_RANK), running totals, PARTITION BY, and positional LAG/LEAD.',
       de: 'Rangbildung (RANK, DENSE_RANK), laufende Summen, PARTITION BY und LAG/LEAD.',
     },
@@ -135,12 +135,12 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'ddl',
     displayName: {
-      fa: '۹. تعریف ساختار و اسکیمای پایگاه‌داده (DDL)',
+      fa: '۹. ساختار و معماری پایگاه‌داده (DDL)',
       en: '9. DDL & Schema Design',
       de: '9. DDL & Schemaentwurf',
     },
     about: {
-      fa: 'ساخت جداول (CREATE)، تغییر ساختار (ALTER)، حذف (DROP) و تعیین قیود PRIMARY KEY، UNIQUE، CHECK.',
+      fa: 'تعریف جداول با CREATE، تغییر ساختار با ALTER، حذف با DROP و تعیین قیود PRIMARY KEY، UNIQUE و CHECK.',
       en: 'CREATE, ALTER, DROP, SQL storage data types, and integrity constraints.',
       de: 'CREATE, ALTER, DROP, SQL-Datentypen und Integritätsbedingungen (Constraints).',
     },
@@ -149,12 +149,12 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'dml',
     displayName: {
-      fa: '۱۰. دستکاری و ویرایش داده‌ها (DML)',
+      fa: '۱۰. درج، ویرایش و حذف داده‌ها (DML)',
       en: '10. Modifying Data (DML)',
       de: '10. Datenmodifikation (DML)',
     },
     about: {
-      fa: 'درج تکی و گروهی با INSERT، ویرایش ردیف‌ها با UPDATE، حذف گزینشی با DELETE و الگوی مدرن UPSERT.',
+      fa: 'درج تکی و گروهی با INSERT، ویرایش رکوردها با UPDATE، حذف با DELETE و الگوی مدرن و اتمیک UPSERT.',
       en: 'Single & bulk INSERT, UPDATE, DELETE, and atomic UPSERT (ON CONFLICT).',
       de: 'Einzel- und Bulk-INSERT, UPDATE, DELETE und atomare UPSERT-Operationen.',
     },
@@ -168,9 +168,9 @@ export const sequences: SequenceInfo[] = [
       de: '11. Mengenoperationen',
     },
     about: {
-      fa: 'اجتماع داده‌ها با UNION و UNION ALL، اشتراک با INTERSECT و تفاضل با EXCEPT همراه با دیاگرام.',
-      en: 'UNION, UNION ALL, INTERSECT, and EXCEPT with RStudio-style set schematics.',
-      de: 'UNION, UNION ALL, INTERSECT und EXCEPT mit RStudio-Mengen-Diagrammen.',
+      fa: 'اجتماع داده‌ها با UNION و UNION ALL، اشتراک با INTERSECT و تفاضل با EXCEPT همراه با دیاگرام‌های ون.',
+      en: 'UNION, UNION ALL, INTERSECT, and EXCEPT with visual set schematics.',
+      de: 'UNION, UNION ALL, INTERSECT und EXCEPT mit visuellen Mengen-Diagrammen.',
     },
     levels: setOpsLevels,
   },
@@ -182,7 +182,7 @@ export const sequences: SequenceInfo[] = [
       de: '12. Views & Materialized Patterns',
     },
     about: {
-      fa: 'ساخت نمای مجازی CREATE VIEW، کپسوله‌سازی جوین‌های پیچیده و الگوی کش نمای مادی.',
+      fa: 'ساخت نمای مجازی با CREATE VIEW، ساده‌سازی جوین‌های پیچیده و الگوی کش نمای مادی (Materialized View).',
       en: 'CREATE VIEW, encapsulating joins/aggregates, and the materialized-view caching pattern.',
       de: 'CREATE VIEW, Kapselung komplexer Verknüpfungen und Materialized-View Caching-Muster.',
     },
@@ -191,12 +191,12 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'performance',
     displayName: {
-      fa: '۱۳. ایندکس‌ها و کارایی کوئری‌ها (Performance)',
+      fa: '۱۳. ایندکس‌ها و افزایش کارایی (Performance)',
       en: '13. Indexes & Performance Tuning',
       de: '13. Indizes & Performance-Tuning',
     },
     about: {
-      fa: 'ساخت ایندکس‌های درخت B، تحلیل پلن اجرا با EXPLAIN، ایندکس‌های مرکب و ایندکس پوششی.',
+      fa: 'ساخت ایندکس‌های درخت B، تحلیل پلن اجرای کوئری با EXPLAIN، ایندکس‌های مرکب و تکنیک‌های بهینه‌سازی.',
       en: 'B-Tree indexes, EXPLAIN QUERY PLAN inspection, composite indexes, and query tuning.',
       de: 'B-Tree Indizes, EXPLAIN QUERY PLAN Analyse, zusammengesetzte Indizes und Tuning.',
     },
@@ -205,12 +205,12 @@ export const sequences: SequenceInfo[] = [
   {
     id: 'transactions',
     displayName: {
-      fa: '۱۴. تراکنش‌ها و اصول ACID (Transactions)',
+      fa: '۱۴. تراکنش‌ها و تضمین‌های ACID',
       en: '14. Transactions & ACID',
       de: '14. Transaktionen & ACID',
     },
     about: {
-      fa: 'شروع و تثبیت با BEGIN و COMMIT، بازگردانی تغییرات با ROLLBACK، انتقال اتمیک و اصول چهارگانه ACID.',
+      fa: 'شروع و تثبیت تراکنش با BEGIN و COMMIT، بازگردانی با ROLLBACK، انتقال امن داده و اصول چهارگانه ACID.',
       en: 'BEGIN, COMMIT, ROLLBACK, atomic transfers, and the ACID transactional guarantees.',
       de: 'BEGIN, COMMIT, ROLLBACK, atomare Überweisungen und die ACID-Garantien.',
     },
@@ -232,6 +232,39 @@ export function getNextLevel(id: string): Level | undefined {
 
 export function getSequenceForLevel(id: string): SequenceInfo | undefined {
   return sequences.find((s) => s.levels.some((l) => l.id === id));
+}
+
+/**
+ * Returns level difficulty 1-5 dots.
+ * If explicitly defined on level, uses it; otherwise calculates based on topic complexity.
+ */
+export function getLevelDifficulty(level: Level): 1 | 2 | 3 | 4 | 5 {
+  if (level.difficulty) return level.difficulty;
+  const seq = getSequenceForLevel(level.id);
+  const seqId = seq?.id ?? '';
+  switch (seqId) {
+    case 'intro':
+      return 1;
+    case 'filters':
+    case 'dml':
+    case 'ddl':
+      return 2;
+    case 'joins':
+    case 'groups':
+    case 'functions':
+    case 'set-ops':
+    case 'views':
+      return 3;
+    case 'advanced-joins':
+    case 'performance':
+    case 'transactions':
+      return 4;
+    case 'subqueries':
+    case 'window':
+      return 5;
+    default:
+      return 3;
+  }
 }
 
 export { shopSchema, shopSeed };

@@ -26,7 +26,7 @@ export interface DialogStep {
   command?: string;
   beforeMarkdowns?: string[] | { fa?: string[]; en?: string[]; de?: string[] };
   afterMarkdowns?: string[] | { fa?: string[]; en?: string[]; de?: string[] };
-  /** Optional schematic diagram matching RStudio cheat sheet style (e.g. 'inner-join', 'left-join', etc.) */
+  /** Optional schematic diagram matching cheat sheet style (e.g. 'inner-join', 'left-join', etc.) */
   diagram?: string;
 }
 
@@ -47,6 +47,8 @@ export interface Level {
   disabled?: string[];
   /** Statements that count toward golf (default: non-meta SQL). */
   golfPar?: number;
+  /** Level difficulty (1 to 5 dots), matching learn-dvc standard. */
+  difficulty?: 1 | 2 | 3 | 4 | 5;
 }
 
 export interface SequenceInfo {
