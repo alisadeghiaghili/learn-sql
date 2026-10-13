@@ -54,6 +54,10 @@ export const UI_STRINGS: Record<Locale, Record<string, string>> = {
     completeAllMessage: 'این آخرین سطح بود — کل مسیر را تکمیل کردی!',
     nextLevelButton: 'بعدی: {name}',
     browseLevels: 'مشاهدهٔ سطوح',
+    uiGuideTitle: 'راهنمای رابط کاربری',
+    uiGuideIntro: 'هر بخش از صفحه چه کاری انجام می‌دهد و چطور استفاده می‌شود را ببینید. با «هایلایت» می‌توانید بخش موردنظر را روی صفحه مشخص کنید.',
+    uiGuideHighlight: 'هایلایت',
+    uiGuideHowTo: 'نحوهٔ استفاده:',
   },
   en: {
     sandbox: 'Sandbox',
@@ -96,6 +100,10 @@ export const UI_STRINGS: Record<Locale, Record<string, string>> = {
     completeAllMessage: 'That was the last level — you finished the whole curriculum!',
     nextLevelButton: 'Next: {name}',
     browseLevels: 'Browse levels',
+    uiGuideTitle: 'UI Guide',
+    uiGuideIntro: 'See what each part of the screen does and how to use it. Use Highlight to point it out on the page.',
+    uiGuideHighlight: 'Highlight',
+    uiGuideHowTo: 'How to use:',
   },
   de: {
     sandbox: 'Sandkasten',
@@ -138,6 +146,10 @@ export const UI_STRINGS: Record<Locale, Record<string, string>> = {
     completeAllMessage: 'Das war das letzte Level — du hast den kompletten Kurs beendet!',
     nextLevelButton: 'Weiter: {name}',
     browseLevels: 'Level durchsuchen',
+    uiGuideTitle: 'UI-Guide',
+    uiGuideIntro: 'Sieh dir an, was jeder Bereich der Oberfläche tut und wie du ihn nutzt. Mit „Hervorheben" wird der Bereich auf der Seite markiert.',
+    uiGuideHighlight: 'Hervorheben',
+    uiGuideHowTo: 'So geht’s:',
   },
 };
 

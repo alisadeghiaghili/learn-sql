@@ -36,6 +36,8 @@ import {
   GITHUB_URL,
 } from './components/WelcomeDialog';
 import { LevelCompleteModal } from './components/LevelCompleteModal';
+import { UiGuideModal } from './components/UiGuideModal';
+import { guideRegions } from './uiGuide';
 import { buildCandidates, completeToken } from './autocomplete';
 
 type Mode =
@@ -131,6 +133,7 @@ export function App() {
       return true;
     }
   });
+  const [showGuide, setShowGuide] = useState(false);
 
   const undoStack = useRef<Snapshot[]>([]);
   const modeRef = useRef(mode);
@@ -423,6 +426,38 @@ export function App() {
     void runSql(editor);
   }, [editor, runSql]);
 
+  // UI Guide tour: live regions to outline while the guide is briefly closed.
+  const [tour, setTour] = useState<Set<string>>(new Set());
+  const openGuide = useCallback(
+    (focusId?: string) => {
+      const regions = guideRegions(locale);
+      const selectors = (focusId
+        ? regions.filter((r) => r.id === focusId)
+        : regions
+      ).map((r) => r.selector);
+      setTour(new Set(selectors));
+    },
+    [locale],
+  );
+
+  // Outline the selected live regions on screen for the duration of a tour,
+  // then fade them back when the timer (or the guide) ends.
+  useEffect(() => {
+    if (tour.size === 0) return;
+    const nodes: Element[] = [];
+    tour.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((n) => {
+        n.classList.add('ui-tour-on');
+        nodes.push(n);
+      });
+    });
+    const id = window.setTimeout(() => setTour(new Set()), 3000);
+    return () => {
+      window.clearTimeout(id);
+      nodes.forEach((n) => n.classList.remove('ui-tour-on'));
+    };
+  }, [tour]);
+
   const activeLevel = mode.kind === 'level' ? mode.level : null;
   const showIntro = mode.kind === 'level' && mode.intro;
 
@@ -574,10 +609,10 @@ export function App() {
               className="help-btn"
               onClick={() => {
                 setIsNavOpen(false);
-                setShowWelcome(true);
+                setShowGuide(true);
               }}
-              title={t('help', locale)}
-              aria-label={t('help', locale)}
+              title={t('uiGuideTitle', locale)}
+              aria-label={t('uiGuideTitle', locale)}
             >
               ?
             </button>
@@ -720,6 +755,14 @@ export function App() {
           }}
         />
       )}
+
+      <UiGuideModal
+        open={showGuide}
+        onClose={() => setShowGuide(false)}
+        onTour={openGuide}
+        onReopen={() => setShowGuide(true)}
+        locale={locale}
+      />
 
       <LevelCompleteModal
         open={complete !== null}

@@ -1226,3 +1226,92 @@ button:disabled {
   line-height: 1.5;
 }
 
+/* ——— UI Guide (? help button) ——— */
+
+.modal-backdrop.is-closing {
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  opacity: 0;
+}
+
+/* Tour pulse — outlines live regions while the guide is briefly closed. */
+.ui-tour-on {
+  outline: 2px dashed var(--goal);
+  outline-offset: 3px;
+  border-radius: var(--radius);
+  animation: tour-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes tour-pulse {
+  0%,
+  100% {
+    outline-color: color-mix(in srgb, var(--goal) 45%, transparent);
+  }
+  50% {
+    outline-color: var(--accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-tour-on {
+    animation: none;
+  }
+}
+
+.ui-help-intro {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ui-help-item {
+  border: 1px solid var(--border);
+  background: var(--raised);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.ui-help-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ui-help-head h3 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.ui-help-focus {
+  font-size: 11px;
+  padding: 4px 8px;
+  min-height: 28px;
+  white-space: nowrap;
+}
+
+.ui-help-what p,
+.ui-help-how p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.ui-help-what {
+  color: var(--ink);
+}
+
+.ui-help-how {
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.ui-help-how strong {
+  color: var(--goal);
+}
+
