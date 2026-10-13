@@ -6,6 +6,9 @@ All notable changes to LearnSQL are documented here.
 
 ### Added
 
+- **Unique-visitor counter** — the toolbar shows how many distinct browsers have
+  opened the course. Each browser is counted once; the number is read from the
+  shared course counter service and shown as received.
 - **Tab-key autocomplete in the SQL editor** — pressing `Tab` completes the
   current token using live table names, live column names, and a curated set of
   SQL/SQLite keywords. The shortest matching candidate is chosen (first-seen on

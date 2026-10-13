@@ -33,6 +33,7 @@ import {
 import { LevelCompleteModal } from './components/LevelCompleteModal';
 import { SqlEditor } from './components/SqlEditor';
 import { SqlLogo } from './components/SqlLogo';
+import { VisitorStat } from './components/VisitorStat';
 import { launchConfetti, playFanfare } from './confetti';
 import { UiGuideModal } from './components/UiGuideModal';
 import { guideRegions } from './uiGuide';
@@ -615,6 +616,7 @@ export function App() {
             </button>
           </div>
 
+          <VisitorStat locale={locale} />
           <a
             className="tb-link gh"
             href={GITHUB_URL}

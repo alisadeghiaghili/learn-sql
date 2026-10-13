@@ -2019,3 +2019,29 @@ button:disabled {
     opacity: 1;
   }
 }
+
+/* Unique-visitor count (toolbar) */
+.tb-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.tb-stat .visitor-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.tb-stat .visitor-count {
+  color: var(--ink);
+}
