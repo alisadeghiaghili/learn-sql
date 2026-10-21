@@ -287,6 +287,152 @@ export const dateFns: Level = {
   ],
 };
 
+export const dateTimeFns: Level = {
+  id: 'fn-datetime',
+  name: {
+    fa: 'توداگهٔ کامل تاریخ-ساعت (datetime)',
+    en: 'Full Timestamps (datetime)',
+    de: 'Volle Zeitstempel (datetime)',
+  },
+  hint: {
+    fa: "SELECT order_date, datetime(order_date) AS dt, datetime(order_date, '+1 month') AS next_month FROM orders WHERE id = 1;",
+    en: "SELECT order_date, datetime(order_date) AS dt, datetime(order_date, '+1 month') AS next_month FROM orders WHERE id = 1;",
+    de: "SELECT order_date, datetime(order_date) AS dt, datetime(order_date, '+1 month') AS next_month FROM orders WHERE id = 1;",
+  },
+  schema: shopSchema,
+  seed: shopSeed,
+  solution:
+    "SELECT order_date, datetime(order_date) AS dt, datetime(order_date, '+1 month') AS next_month FROM orders WHERE id = 1;",
+  golfPar: 1,
+  goal: {
+    type: 'result',
+    columns: ['order_date', 'dt', 'next_month'],
+    rows: [['2024-01-12', '2024-01-12 00:00:00', '2024-02-12 00:00:00']],
+    orderMatters: false,
+  },
+  startDialog: [
+    {
+      type: 'modal',
+      markdowns: {
+        fa: [
+          '## زمان کامل با datetime',
+          'وقتی تاریخ به تنهایی کافی نبود و ساعت هم لازم باشد، `datetime` به دردمان می‌خورد:',
+          "- `datetime(d)`: یک تاریخ را به قالب کاملِ تاریخ-ساعت (`YYYY-MM-DD HH:MM:SS`) برمی‌گرداند؛ اگر ساعتی در ورودی نبود، `00:00:00` در نظر گرفته می‌شود.",
+          "- `datetime(d, '+1 month')`: بازه‌های بزرگ‌تر مثل ماه و سال را هم می‌پذیرد و تاریخ را به جلو یا عقب جابه‌جا می‌کند.",
+          'در مقایسه با `date` که فقط بخشی از تاریخ را برمی‌گرداند، `datetime` همیشه یک توداگهٔ کامل با ساعت دارد.',
+        ],
+        en: [
+          '## Full Timestamps with datetime',
+          'When a bare date is not enough and you also need the time, `datetime` helps:',
+          "- `datetime(d)`: Returns a full `YYYY-MM-DD HH:MM:SS` timestamp; a missing time is assumed to be `00:00:00`.",
+          "- `datetime(d, '+1 month')`: Accepts larger intervals such as months and years, moving the date forward or back.",
+          'Compared to `date`, which returns only the date part, `datetime` always yields a complete timestamp including the time.',
+        ],
+        de: [
+          '## Volle Zeitstempel mit datetime',
+          'Wenn ein reines Datum nicht reicht und auch die Uhrzeit gebraucht wird, hilft `datetime`:',
+          '- `datetime(d)`: Liefert einen vollen Zeitstempel im Format `JJJ-MM-TT HH:MM:SS`; eine fehlende Uhrzeit wird als `00:00:00` angenommen.',
+          "- `datetime(d, '+1 month')`: Akzeptiert größere Intervalle wie Monate und Jahre und verschiebt das Datum vor- oder zurück.",
+          'Im Unterschied zu `date`, das nur den Datumsanteil zurückgibt, liefert `datetime` immer einen vollständigen Zeitstempel inkl. Uhrzeit.',
+        ],
+      },
+    },
+    {
+      type: 'modal',
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'برای سفارش شمارهٔ ۱: تاریخ سفارش (`order_date`)، زمان کامل آن به نام `dt` و یک ماه پس از آن به نام `next_month` را نمایش دهید.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'For order id 1: display its `order_date`, the full timestamp as `dt`, and one month later as `next_month`.',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Geben Sie für Bestellung 1 das `order_date`, den vollen Zeitstempel als `dt` und den einen Monat später liegenden Termin als `next_month` aus.',
+        ],
+      },
+    },
+  ],
+};
+
+export const julianDayFns: Level = {
+  id: 'fn-julianday',
+  name: {
+    fa: 'فاصلهٔ دو تاریخ (julianday)',
+    en: 'Days Between Dates (julianday)',
+    de: 'Tage zwischen zwei Daten (julianday)',
+  },
+  hint: {
+    fa: "SELECT order_date, julianday('2024-05-19') - julianday(order_date) AS days FROM orders WHERE id = 1;",
+    en: "SELECT order_date, julianday('2024-05-19') - julianday(order_date) AS days FROM orders WHERE id = 1;",
+    de: "SELECT order_date, julianday('2024-05-19') - julianday(order_date) AS days FROM orders WHERE id = 1;",
+  },
+  schema: shopSchema,
+  seed: shopSeed,
+  solution:
+    "SELECT order_date, julianday('2024-05-19') - julianday(order_date) AS days FROM orders WHERE id = 1;",
+  golfPar: 1,
+  goal: {
+    type: 'result',
+    columns: ['order_date', 'days'],
+    rows: [['2024-01-12', 128]],
+    orderMatters: false,
+  },
+  startDialog: [
+    {
+      type: 'modal',
+      markdowns: {
+        fa: [
+          '## شمارش روزهای بین دو تاریخ با julianday',
+          'توابع `date`/`datetime` تاریخ را جابه‌جا می‌کنند، اما برای «چند روز فاصله» به چیزی دقیق‌تر نیاز داریم.',
+          '- `julianday(d)`: تاریخ را به عدد کسریِ روزهای دورهٔ یولیانی تبدیل می‌کند.',
+          'تفاوت دو مقدار `julianday` درست به تعداد روزهای بین دو تاریخ می‌رسد، به همین دلیل برای محاسبهٔ بازه‌ها و سنِ زمان به‌کار می‌رود:',
+          '```sql',
+          "julianday('2024-05-19') - julianday(order_date)",
+          '```',
+        ],
+        en: [
+          '## Counting Days Between Two Dates with julianday',
+          '`date`/`datetime` shift a date, but to answer "how many days apart" we need something exact.',
+          '- `julianday(d)`: Converts a date to its fractional day number on the Julian calendar.',
+          'Subtracting two `julianday` values gives exactly the number of days between the two dates, which makes it ideal for measuring intervals and elapsed time:',
+          '```sql',
+          "julianday('2024-05-19') - julianday(order_date)",
+          '```',
+        ],
+        de: [
+          '## Tage zwischen zwei Daten mit julianday',
+          '`date`/`datetime` verschieben ein Datum, aber um «wie viele Tage dazwischen» zu beantworten, brauchen wir etwas Genaues.',
+          '- `julianday(d)`: Wandelt ein Datum in seine Bruchtagzahl auf der julianischen Skala um.',
+          'Die Differenz zweier `julianday`-Werte ergibt exakt die Anzahl der Tage zwischen beiden Daten — ideal, um Intervalle und abgelaufene Zeit zu messen:',
+          '```sql',
+          "julianday('2024-05-19') - julianday(order_date)",
+          '```',
+        ],
+      },
+    },
+    {
+      type: 'modal',
+      markdowns: {
+        fa: [
+          '## مأموریت این مرحله',
+          'برای سفارش شمارهٔ ۱: تاریخ سفارش (`order_date`) و تعداد روزهای گذشته تا تاریخ `2024-05-19` به نام `days` را محاسبه و نمایش دهید.',
+        ],
+        en: [
+          '## Challenge Objective',
+          'For order id 1: display its `order_date` and the number of days elapsed until `2024-05-19` as `days`.',
+        ],
+        de: [
+          '## Ziel der Übung',
+          'Geben Sie für Bestellung 1 das `order_date` und die abgelaufenen Tage bis zum `2024-05-19` als `days` aus.',
+        ],
+      },
+    },
+  ],
+};
+
 export const caseWhen: Level = {
   id: 'fn-case',
   name: {
@@ -532,6 +678,8 @@ export const functionLevels: Level[] = [
   concat,
   mathFns,
   dateFns,
+  dateTimeFns,
+  julianDayFns,
   caseWhen,
   nullFns,
   castType,

@@ -47,6 +47,8 @@ const TOPICS: Record<string, string[]> = {
     'fn-concat',
     'fn-math',
     'fn-date',
+    'fn-datetime',
+    'fn-julianday',
     'fn-case',
     'fn-nullfns',
     'fn-cast',
