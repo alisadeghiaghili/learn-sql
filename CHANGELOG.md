@@ -6,6 +6,14 @@ All notable changes to LearnSQL are documented here.
 
 ### Added
 
+- **Date & time levels (`fn-datetime`, `fn-julianday`)** — two new levels in the
+  Functions sequence round out the date topic: `fn-datetime` covers full
+  timestamps with `datetime(d)` and month/year intervals, and `fn-julianday`
+  covers computing the day difference between two dates with `julianday`.
+- **Unique-visitor counter** — the toolbar shows the course's visitor count
+  (visitorbadge.io, `path=learn-sql`). It reads the shared value with the
+  read-only `GET` endpoint and bumps it once per browser per day via `HIT`, with a
+  local "never drop" floor so a returning visitor's number never falls.
 - **Tab-key autocomplete in the SQL editor** — pressing `Tab` completes the
   current token using live table names, live column names, and a curated set of
   SQL/SQLite keywords. The shortest matching candidate is chosen (first-seen on
