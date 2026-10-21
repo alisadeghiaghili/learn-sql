@@ -1,24 +1,28 @@
 /**
- * Unique-visitor counter shared by all courses on this origin.
+ * Unique-visitor counter for the toolbar.
  *
- * The number lives only on the counter server. A browser is counted once
- * (flagged in localStorage); every other load just reads the current value.
- * The server value is always shown as received.
+ * Presentation mirrors learn-dvc (a small person-icon + count in the toolbar,
+ * hidden until a value is known). The counting mechanism mirrors aghili-labs:
+ * the number lives on visitorbadge.io at `path=learn-sql` — a single shared
+ * value on their server, so every browser reads the same number. We read it
+ * with the read-only `/api/get` endpoint (which never increments) and bump it
+ * via `/api/hit` only once per browser per UTC day. This keeps one stable
+ * number that grows with genuine new visitors instead of inflating on every
+ * page load. A small local cache doubles as a "never drop" floor so a
+ * returning browser never sees its number fall.
  */
 
-export const COUNTER_API = 'https://abacus.jasoncameron.dev';
-export const COUNTER_NAMESPACE = 'alisadeghiaghili.github.io';
-export const COURSE_SLUG = 'learn-sql';
-export const COUNTER_KEY = `${COURSE_SLUG}-unique-visitors`;
+const STORAGE_KEY = 'learn-sql:visitors:v1';
+const LAST_VISIT_KEY = 'learn-sql:last-visit-date';
 
-export const COUNTED_FLAG_KEY = `${COURSE_SLUG}:visitor-counted:v1`;
-export const COUNT_CACHE_KEY = `${COURSE_SLUG}:visitor-count:v2`;
-export const REQUEST_TIMEOUT_MS = 5000;
+const COUNTER_PATH = 'learn-sql';
+const GET_URL = `https://api.visitorbadge.io/api/get?path=${COUNTER_PATH}`; // read-only
+const HIT_URL = `https://api.visitorbadge.io/api/hit?path=${COUNTER_PATH}`; // +1
+const REQUEST_TIMEOUT_MS = 3500;
 
-type Action = 'get' | 'hit';
-
-export function counterUrl(action: Action): string {
-  return `${COUNTER_API}/${action}/${COUNTER_NAMESPACE}/${COUNTER_KEY}`;
+export interface CachedCount {
+  count: number;
+  at: number;
 }
 
 function getStorage(): Storage | null {
@@ -30,42 +34,20 @@ function getStorage(): Storage | null {
 }
 
 function isCount(v: unknown): v is number {
-  return typeof v === 'number' && Number.isInteger(v) && v >= 0;
+  return typeof v === 'number' && Number.isFinite(v) && v >= 0;
 }
 
 /**
- * One counter request. Resolves to the server value, or `null` on any failure
- * (network error, timeout, non-2xx, bad JSON). A 404 on `get` means the key
- * does not exist yet and is reported as 0.
+ * Last known count, used as a first-paint value and a "never drop" floor.
+ * Returns `null` when this browser has never recorded a count yet.
  */
-async function request(action: Action): Promise<number | null> {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
-  try {
-    const res = await fetch(counterUrl(action), {
-      cache: 'no-store',
-      signal: ctrl.signal,
-    });
-    if (action === 'get' && res.status === 404) return 0;
-    if (!res.ok) return null;
-    const body: unknown = await res.json();
-    const value = (body as { value?: unknown } | null)?.value;
-    return isCount(value) ? value : null;
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-/** Last server value, for the first paint only. Never a floor. */
 export function readCachedCount(): number | null {
   const storage = getStorage();
   if (!storage) return null;
   try {
-    const raw = storage.getItem(COUNT_CACHE_KEY);
+    const raw = storage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as { count?: unknown } | null;
+    const parsed = JSON.parse(raw) as CachedCount | null;
     return isCount(parsed?.count) ? parsed.count : null;
   } catch {
     return null;
@@ -74,53 +56,96 @@ export function readCachedCount(): number | null {
 
 function writeCachedCount(count: number): void {
   try {
-    getStorage()?.setItem(
-      COUNT_CACHE_KEY,
-      JSON.stringify({ count, at: new Date().toISOString() }),
-    );
+    getStorage()?.setItem(STORAGE_KEY, JSON.stringify({ count, at: Date.now() }));
   } catch {
-    /* storage unavailable */
+    // storage unavailable (private mode / quota)
   }
 }
 
 /**
- * Registers this browser (once) and returns the server's visitor count,
- * or `null` when the server could not be reached.
+ * Tolerant parser for a counter value: a bare number, or JSON of the form
+ * `{ "value": n }` / `{ "count": n }` / `{ "visitors": n }`.
+ */
+export function parseCountText(text: string): number | null {
+  const trimmed = (text ?? '').trim();
+  let n: number;
+  if (/^\d+$/.test(trimmed)) {
+    n = Number(trimmed);
+  } else {
+    try {
+      const j: unknown = JSON.parse(trimmed);
+      const rec = (j ?? {}) as Record<string, unknown>;
+      n = Number(rec.value ?? rec.count ?? rec.visitors ?? j);
+    } catch {
+      const m = trimmed.match(/\d+/);
+      n = m ? Number(m[0]) : NaN;
+    }
+  }
+  return isCount(n) ? n : null;
+}
+
+async function fetchCount(url: string): Promise<number | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, {
+      cache: 'no-store',
+      signal: controller.signal,
+      headers: { Accept: 'application/json, text/plain, */*' },
+    });
+    if (!res.ok) return null;
+    const text = await res.text();
+    return parseCountText(text);
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * True (and records) when this is the browser's first visit of the current UTC
+ * day. The flag is set up front so a fast reload can never double-bump.
+ */
+function isNewDailyVisit(storage: Storage): boolean {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    if (storage.getItem(LAST_VISIT_KEY) === today) return false;
+    storage.setItem(LAST_VISIT_KEY, today);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Returns the visitor count to display, or `null` when nothing is known yet
+ * (a first visit with the counter unreachable) so the UI can stay hidden.
  */
 export async function loadVisitorCount(): Promise<number | null> {
   const storage = getStorage();
-  let mayHit = false;
+  const floor = readCachedCount();
 
-  if (storage) {
+  // 1. Read the shared counter without incrementing.
+  let value = await fetchCount(GET_URL);
+
+  // 2. Genuinely new (daily) visit → bump the shared counter exactly once.
+  if (storage && isNewDailyVisit(storage)) {
     try {
-      if (storage.getItem(COUNTED_FLAG_KEY) === null) {
-        // Flag first, so concurrent loads of this page never double count.
-        storage.setItem(COUNTED_FLAG_KEY, new Date().toISOString());
-        mayHit = true;
-      }
+      await fetch(HIT_URL, { cache: 'no-store' });
     } catch {
-      mayHit = false;
+      // ignore network / adblocker failures
     }
+    if (value !== null) value = value + 1;
   }
 
-  let count: number | null = null;
-  if (mayHit) {
-    count = await request('hit');
-    if (count === null) {
-      try {
-        storage?.removeItem(COUNTED_FLAG_KEY);
-      } catch {
-        /* storage unavailable */
-      }
-    }
+  // 3. Never show less than the last value we already displayed.
+  if (value !== null) {
+    const total = Math.max(value, floor ?? 0);
+    writeCachedCount(total);
+    return total;
   }
-  if (count === null) count = await request('get');
 
-  if (count !== null) writeCachedCount(count);
-  return count;
-}
-
-/** Display form of the count. */
-export function formatVisitorCount(count: number): string {
-  return count.toLocaleString('en-US');
+  // 4. Counter unreachable: hold the floor for returning browsers, else hide.
+  return floor;
 }
