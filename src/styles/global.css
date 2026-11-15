@@ -1389,6 +1389,54 @@ button:disabled {
   margin: 6px 0;
 }
 
+.support-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 16px;
+  flex-wrap: wrap;
+}
+
+.support-actions .bmc-btn-container {
+  margin: 0;
+}
+
+.support-actions .kbd-btn {
+  min-width: 210px;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: #1f3d34;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 0 22px;
+  box-sizing: border-box;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  direction: ltr;
+  white-space: nowrap;
+}
+
+.support-actions .kbd-btn:hover,
+.support-actions .kbd-btn:active,
+.support-actions .kbd-btn:focus {
+  text-decoration: none;
+  cursor: pointer;
+  background-color: #285245;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.support-actions .kbd-btn svg {
+  flex-shrink: 0;
+}
+
 .bmc-btn {
   min-width: 210px;
   color: #ffffff !important;
