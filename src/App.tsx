@@ -28,6 +28,7 @@ import { DialogModal } from './components/DialogModal';
 import {
   WelcomeDialog,
   COFFEE_URL,
+  COFFEEBEDE_URL,
   GITHUB_URL,
 } from './components/WelcomeDialog';
 import { LevelCompleteModal } from './components/LevelCompleteModal';
@@ -646,6 +647,15 @@ export function App() {
             title={t('supportTitle', locale)}
           >
             {t('support', locale)}
+          </a>
+          <a
+            className="tb-link support"
+            href={COFFEEBEDE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={t('supportCoffeebedeTitle', locale)}
+          >
+            {t('supportCoffeebede', locale)}
           </a>
         </div>
       </header>

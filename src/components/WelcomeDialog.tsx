@@ -8,6 +8,7 @@ import { type Locale, t } from '../i18n';
 import { SqlLogo } from './SqlLogo';
 
 export const COFFEE_URL = 'https://www.buymeacoffee.com/alisadeghil';
+export const COFFEEBEDE_URL = 'https://www.coffeebede.com/alisadeghiaghili';
 export const GITHUB_URL = 'https://github.com/alisadeghiaghili/learn-sql';
 export const LINKTR_URL = 'https://linktr.ee/aliaghili';
 
@@ -275,14 +276,49 @@ export function WelcomeDialog({ onClose, onOpenLevels, locale = 'fa' }: WelcomeD
 
           <p>
             {locale === 'fa'
-              ? 'حمایت مالی در Buy Me a Coffee:'
+              ? 'حمایت مالی از توسعه‌دهنده:'
               : locale === 'de'
-              ? 'Kaffee spendieren (unterstützt den Entwickler):'
-              : 'Buy Me a Coffee (supports the publisher):'}
+              ? 'Unterstütze den Entwickler:'
+              : 'Support the publisher:'}
           </p>
-          <p>
+          <div className="support-actions">
             <BmcButton />
-          </p>
+            <a
+              className="kbd-btn"
+              href={COFFEEBEDE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={
+                locale === 'fa'
+                  ? 'حمایت با ریال از طریق کافی‌بده'
+                  : locale === 'de'
+                  ? 'Mit Rial über CoffeeBede spenden'
+                  : 'Donate in Rials via CoffeeBede'
+              }
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                aria-hidden="true"
+              >
+                <g
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M8 3c-1 1.5 1 2.5 0 4" />
+                  <path d="M12 3c-1 1.5 1 2.5 0 4" />
+                  <path d="M4 10h13v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-3z" />
+                  <path d="M17 11h2a2 2 0 0 1 0 4h-2" />
+                  <path d="M6 21h9" />
+                </g>
+              </svg>
+              <span>{locale === 'fa' ? 'کافی‌بده' : 'CoffeeBede'}</span>
+            </a>
+          </div>
         </div>
         <div className="modal-footer">
           <button type="button" onClick={onClose}>
